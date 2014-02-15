@@ -51,10 +51,6 @@ namespace Liara.Demos.Formatting
             // Anything put into content will be serialized into the stream, using the Formatter, 
             // which is in-turn automatically selected using the FormatSelector.
 
-            // Uses the default TextFormatter here.
-
-
-            //await Task.Delay(10000);
             var t = new TestType {Message = "Hello!", RequestPath = context.Request.Info.Uri.ToString()};
             context.Response.Content = t;
             await base.ProcessAsync(context);

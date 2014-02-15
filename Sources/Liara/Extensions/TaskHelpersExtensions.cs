@@ -729,7 +729,8 @@ namespace System.Threading.Tasks
             return Completed;
         }
 
-        public CatchResult Task(Task task)
+// ReSharper disable once CSharpWarnings::CS0109
+        public new CatchResult Task(Task task)
         {
             return new CatchResult {Task = task};
         }
@@ -764,7 +765,8 @@ namespace System.Threading.Tasks
         }
 
 
-        public CatchResult Task(Task<T> task)
+// ReSharper disable once CSharpWarnings::CS0109
+        public new CatchResult Task(Task<T> task)
         {
             return new CatchResult {Task = task};
         }
