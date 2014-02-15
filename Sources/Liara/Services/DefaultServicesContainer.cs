@@ -3,17 +3,11 @@
 // Copyright (c) Launchark Technologies. All rights reserved.
 // See License.txt in the project root for license information.
 // 
-// Created: 10:45 PM 14-02-2014
+// Created: 8:31 AM 15-02-2014
 
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using Liara.Common;
-using Liara.Formatting;
-using Liara.Logging;
-using Liara.ResponseProcessing;
 using LightInject;
 
 namespace Liara.Services
@@ -44,68 +38,25 @@ namespace Liara.Services
             }
         }
 
-        public virtual void Discover()
+        public void Register(Type serviceType, object instance, string serviceName)
         {
-            var blackList = new List<string>
-            {
-                "mscorlib",
-                "System",
-                "System.*",
-                "Microsoft.*",
-                "LightInject",
-            };
-
-            var whiteList = new List<string>();
-
-            var configurableTypes = new List<Type>
-            {
-                typeof (LiaraModule),
-                typeof (ILiaraFormatSelector),
-                typeof (ILiaraFormatter),
-                typeof (ILiaraStatusHandler),
-                typeof (ILiaraResponseSynchronizer),
-                typeof (ILiaraLogWriter)
-            };
-
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
-            var liaraAssemblyName = Assembly.GetExecutingAssembly().GetName().Name;
-            var liaraExtendedAssemblies = liaraAssemblyName + ".*";
-
-            foreach (var assembly in assemblies)
-            {
-                var name = assembly.GetName().Name;
-                if (whiteList.Any(w => IsWildcardedMatch(w, name)) ||
-                    !blackList.Any(b => IsWildcardedMatch(b, name)))
-                {
-                    if (name == liaraAssemblyName || IsWildcardedMatch(liaraExtendedAssemblies, name))
-                    {
-                        serviceContainer.RegisterAssembly(assembly, (type, implType) => configurableTypes.Contains(type));
-                    }
-                    else
-                    {
-                        serviceContainer.RegisterAssembly(assembly);
-                    }
-                }
-            }
-
-            if (LiaraEngine.FrameworkLogger.IsEnabled)
-            {
-                foreach (var serviceRegistration in serviceContainer.AvailableServices)
-                {
-                    LiaraEngine.FrameworkLogger.WriteTo("Registered Services", "Name : {0}, Type: {1}",
-                        serviceRegistration.ServiceName, serviceRegistration.ServiceType);
-                }
-            }
+            serviceContainer.RegisterInstance(serviceType, instance, serviceName);
         }
-        public bool IsWildcardedMatch(string wildCardedString, string valueString)
-        {
-            if (wildCardedString.Contains('*'))
-            {
-                return valueString.StartsWith(wildCardedString.Substring(0, wildCardedString.IndexOf('*'))) &&
-                       valueString.EndsWith(wildCardedString.Substring(wildCardedString.LastIndexOf('*') + 1));
-            }
 
-            return wildCardedString == valueString;
+        public void Register(Type serviceType, Type implementingType, string serviceName, LiaraServiceLifeTime lifeTime)
+        {
+            if (lifeTime == LiaraServiceLifeTime.Singleton)
+            {
+                serviceContainer.Register(serviceType, implementingType, serviceName, new PerContainerLifetime());
+            }
+            else if (lifeTime == LiaraServiceLifeTime.Transient)
+            {
+                serviceContainer.Register(serviceType, implementingType, serviceName);
+            }
+            else if (lifeTime == LiaraServiceLifeTime.PerRequest)
+            {
+                serviceContainer.Register(serviceType, implementingType, serviceName, new PerScopeLifetime());
+            }
         }
 
         public ILiaraServicesContainer GetChildScope()

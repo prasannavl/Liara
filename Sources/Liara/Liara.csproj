@@ -149,6 +149,9 @@
     <Compile Include="MessageHandlers\HttpStatusHandler.cs" />
     <Compile Include="Common\ILiaraStatusHandler.cs" />
     <Compile Include="Services\DefaultServicesContainer.cs" />
+    <Compile Include="Services\ILiaraServiceDiscovery.cs" />
+    <Compile Include="Services\LiaraServiceLifeTime.cs" />
+    <Compile Include="Services\DefaultServiceDiscovery.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ResponseProcessing\HttpStatusCodes.txt" />

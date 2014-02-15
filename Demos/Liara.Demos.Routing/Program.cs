@@ -3,13 +3,11 @@
 // Copyright (c) Launchark Technologies. All rights reserved.
 // See License.txt in the project root for license information.
 // 
-// Created: 12:15 PM 05-02-2014
+// Created: 8:31 AM 15-02-2014
 
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
-using Liara.Formatting;
 using Liara.MessageHandlers;
 using Microsoft.Owin.Hosting;
 using Owin;
@@ -21,12 +19,16 @@ namespace Liara.Demos.Routing
         private static void Main(string[] args)
         {
             var url = "http://localhost:12345";
+            Console.WriteLine("Listening at {0}", url);
+            Console.WriteLine();
+
             using (WebApp.Start<Startup>(url))
             {
-                Console.WriteLine("Listening at {0}", url);
                 Process.Start(url);
                 Console.ReadLine();
             }
+
+            Console.WriteLine("Stopped");
         }
     }
 

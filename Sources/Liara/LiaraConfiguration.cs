@@ -3,12 +3,11 @@
 // Copyright (c) Launchark Technologies. All rights reserved.
 // See License.txt in the project root for license information.
 // 
-// Created: 5:33 AM 13-02-2014
+// Created: 8:31 AM 15-02-2014
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Liara.Common;
 using Liara.Formatting;
 using Liara.Logging;
@@ -140,7 +139,7 @@ namespace Liara
                     if (!isServicesContainerWired)
                         WireServicesContainer();
                     if (!serviceDiscoveryComplete)
-                        Services.Discover();
+                        DiscoverServices();
                     if (!isLogWriterWired)
                         WireLogWriter();
                     if (!isRouteMapped)
@@ -170,13 +169,13 @@ namespace Liara
             }
         }
 
-        public void WireServicesContainer()
+        public virtual void WireServicesContainer()
         {
             servicesContainer = new DefaultServicesContainer();
             isServicesContainerWired = true;
         }
 
-        public void WireLogWriter()
+        public virtual void WireLogWriter()
         {
             var logger = Services.GetAll<ILiaraLogWriter>().OrderByDescending(x => x.Priority).FirstOrDefault();
             logWriter = logger ?? LiaraEngine.FrameworkLogger;
@@ -184,7 +183,7 @@ namespace Liara
             isLogWriterWired = true;
         }
 
-        public void WireDefaultHandlers()
+        public virtual void WireDefaultHandlers()
         {
             Handlers.Insert(0, new RequestFormatHandler());
             Handlers.Insert(0, new RouteResolutionHandler());
@@ -199,14 +198,14 @@ namespace Liara
         }
 
 
-        public void WireRoutes()
+        public virtual void WireRoutes()
         {
             var routeMapper = new RouteMapper(this);
             Routes = routeMapper.MapAll();
             isRouteMapped = true;
         }
 
-        public void WireFormatters()
+        public virtual void WireFormatters()
         {
             var formatterList = Services.GetAll<ILiaraFormatter>()
                 .Where(f => f.VerifyConfiguration())
@@ -222,7 +221,7 @@ namespace Liara
             isFormatterListWired = true;
         }
 
-        public void WireFormatSelector()
+        public virtual void WireFormatSelector()
         {
             var selection =
                 Services.GetAll<ILiaraFormatSelector>().OrderByDescending(x => x.Priority).FirstOrDefault() ??
@@ -232,7 +231,7 @@ namespace Liara
             isFormatSelctorWired = true;
         }
 
-        public void WireStatusHandler()
+        public virtual void WireStatusHandler()
         {
             var selection =
                 Services.GetAll<ILiaraStatusHandler>().OrderByDescending(x => x.Priority).FirstOrDefault() ??
@@ -242,7 +241,7 @@ namespace Liara
             isStatusHandlerWired = true;
         }
 
-        public void WireResponseSynchronizer()
+        public virtual void WireResponseSynchronizer()
         {
             var selection =
                 Services.GetAll<ILiaraResponseSynchronizer>().OrderByDescending(x => x.Priority).FirstOrDefault() ??
@@ -252,9 +251,10 @@ namespace Liara
             isResponseSynchronizerWired = true;
         }
 
-        public void DiscoverServices()
+        public virtual void DiscoverServices()
         {
-            Services.Discover();
+            var discoverer = new DefaultServiceDiscovery(Services);
+            discoverer.Discover();
             serviceDiscoveryComplete = true;
         }
     }

@@ -12,7 +12,8 @@ namespace Liara.Services
 {
     public interface ILiaraServicesContainer : IDisposable
     {
-        void Discover();
+        void Register(Type serviceType, object instance, string serviceName);
+        void Register(Type serviceType, Type implementingType, string serviceName, LiaraServiceLifeTime lifeTime);
         ILiaraServicesContainer GetChildScope();
         object GetContainer();
         object Get(Type serviceType);
