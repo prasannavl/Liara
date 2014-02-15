@@ -3,7 +3,7 @@
 // Copyright (c) Launchark Technologies. All rights reserved.
 // See License.txt in the project root for license information.
 // 
-// Created: 1:24 AM 15-02-2014
+// Created: 8:31 AM 15-02-2014
 
 using System.Collections.Generic;
 using Liara.Common;
@@ -28,6 +28,7 @@ namespace Liara
         LiaraMessageHandlerCollection Handlers { get; set; }
         ILiaraLogWriter LogWriter { get; set; }
         ILiaraResponseSynchronizer ResponseSynchronizer { get; set; }
+        ILiaraLogWriter TraceWriter { get; set; }
         void Build();
         void WireServicesContainer();
         void WireLogWriter();

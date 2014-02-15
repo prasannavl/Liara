@@ -3,7 +3,7 @@
 // Copyright (c) Launchark Technologies. All rights reserved.
 // See License.txt in the project root for license information.
 // 
-// Created: 5:33 AM 13-02-2014
+// Created: 8:31 AM 15-02-2014
 
 using Liara.Internal;
 using Liara.Logging;
@@ -13,7 +13,6 @@ using Liara.Services;
 
 namespace Liara
 {
-
     [__DynamicallyInvokable]
     public abstract class LiaraModule
     {
@@ -38,6 +37,11 @@ namespace Liara
         public ILiaraLogWriter Log
         {
             get { return Context.Log; }
+        }
+
+        public ILiaraLogWriter Trace
+        {
+            get { return Context.Trace; }
         }
     }
 }

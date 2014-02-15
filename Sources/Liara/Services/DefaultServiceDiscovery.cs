@@ -94,12 +94,14 @@ namespace Liara.Services
                 }
             }
 
-            if (LiaraEngine.FrameworkLogger.IsEnabled)
+            if (Global.FrameworkLogger.IsEnabled)
             {
                 foreach (var serviceRegistration in serviceContainer.AvailableServices)
                 {
-                    LiaraEngine.FrameworkLogger.WriteTo("Registered Services", "\r\n{0}Type: {1}",
-                        string.IsNullOrWhiteSpace(serviceRegistration.ServiceName) ? string.Empty : "Name: " + serviceRegistration.ServiceName + ", " ,
+                    Global.FrameworkLogger.WriteTo("Registered Services", "{0}Type: {1}",
+                        string.IsNullOrWhiteSpace(serviceRegistration.ServiceName)
+                            ? string.Empty
+                            : "Name: " + serviceRegistration.ServiceName + ", ",
                         serviceRegistration.ServiceType);
                 }
             }

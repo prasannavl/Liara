@@ -3,7 +3,7 @@
 // Copyright (c) Launchark Technologies. All rights reserved.
 // See License.txt in the project root for license information.
 // 
-// Created: 5:33 AM 13-02-2014
+// Created: 8:31 AM 15-02-2014
 
 using System;
 using System.Collections.Generic;
@@ -111,8 +111,8 @@ namespace Liara.Hosting.Owin
 
         public int ServerPort
         {
-            get { return Items.Get<int>(Constants.OwinConstants.ServerLocalPort); }
-            set { Items.Set(Constants.OwinConstants.ServerLocalPort, value); }
+            get { return int.Parse(Items.Get<string>(Constants.OwinConstants.ServerLocalPort)); }
+            set { Items.Set(Constants.OwinConstants.ServerLocalPort, value.ToString()); }
         }
 
         public string ClientIpAddress
@@ -123,8 +123,8 @@ namespace Liara.Hosting.Owin
 
         public int ClientPort
         {
-            get { return Items.Get<int>(Constants.OwinConstants.ServerRemotePort); }
-            set { Items.Set(Constants.OwinConstants.ServerRemotePort, value); }
+            get { return int.Parse(Items.Get<string>(Constants.OwinConstants.ServerRemotePort)); }
+            set { Items.Set(Constants.OwinConstants.ServerRemotePort, value.ToString()); }
         }
 
         public X509Certificate ClientCertificate

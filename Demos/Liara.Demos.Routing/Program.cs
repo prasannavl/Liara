@@ -22,6 +22,9 @@ namespace Liara.Demos.Routing
             Console.WriteLine("Listening at {0}", url);
             Console.WriteLine();
 
+            LiaraThrottleHandler.MaxConcurrentRequests = 10;
+            Global.FrameworkLogger.IsEnabled = true;
+
             using (WebApp.Start<Startup>(url))
             {
                 Process.Start(url);
@@ -39,6 +42,7 @@ namespace Liara.Demos.Routing
             var config = new LiaraConfiguration();
             //config.Handlers.Add(new HelloHandler());
             config.Build();
+            config.Services.Register(typeof (string), "The Helloku stingo!", "hellostring");
             return config;
         }
 
@@ -59,6 +63,7 @@ namespace Liara.Demos.Routing
             return base.ProcessAsync(context);
         }
     }
+
 
     //Note: Route Prefix is optional, and will automatically be chained together if nested inside modules.
 
@@ -84,6 +89,15 @@ namespace Liara.Demos.Routing
         }
     }
 
+    public class MyModule : TestModule
+    {
+        [Route("/hello3")]
+        public string SayHelloUsingAutoFormat()
+        {
+            return "Hello3 from 3.";
+        }
+    }
+
 
     public class RootModule : LiaraModule
     {
@@ -92,8 +106,9 @@ namespace Liara.Demos.Routing
         [RouteMethod("POST")]
         [Route("/new", routeName: "route2", priority: 5)]
         [RouteMethod("GET", "route2")]
-        public object SayHi()
+        public async Task<object> SayHi()
         {
+            await Task.Delay(50);
             return "\r\nJust saying hi..";
         }
 

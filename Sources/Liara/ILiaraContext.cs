@@ -3,7 +3,7 @@
 // Copyright (c) Launchark Technologies. All rights reserved.
 // See License.txt in the project root for license information.
 // 
-// Created: 5:33 AM 13-02-2014
+// Created: 8:31 AM 15-02-2014
 
 using System;
 using System.Collections.Generic;
@@ -25,5 +25,6 @@ namespace Liara
         ILiaraServicesContainer Services { get; set; }
         Route Route { get; set; }
         ILiaraLogWriter Log { get; }
+        ILiaraLogWriter Trace { get; }
     }
 }

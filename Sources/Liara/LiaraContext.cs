@@ -3,7 +3,7 @@
 // Copyright (c) Launchark Technologies. All rights reserved.
 // See License.txt in the project root for license information.
 // 
-// Created: 5:33 AM 13-02-2014
+// Created: 8:31 AM 15-02-2014
 
 using System;
 using System.Collections.Generic;
@@ -50,6 +50,11 @@ namespace Liara
         public ILiaraLogWriter Log
         {
             get { return Engine.Configuration.LogWriter; }
+        }
+
+        public ILiaraLogWriter Trace
+        {
+            get { return Engine.Configuration.TraceWriter; }
         }
 
         public void Dispose()

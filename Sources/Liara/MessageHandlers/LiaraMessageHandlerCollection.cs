@@ -3,7 +3,7 @@
 // Copyright (c) Launchark Technologies. All rights reserved.
 // See License.txt in the project root for license information.
 // 
-// Created: 5:33 AM 13-02-2014
+// Created: 8:31 AM 15-02-2014
 
 using System.Collections.Generic;
 using System.Linq;
@@ -115,7 +115,7 @@ namespace Liara.MessageHandlers
             return GetEnumerator();
         }
 
-        public Task Execute(LiaraContext context)
+        public Task Execute(ILiaraContext context)
         {
             return Store.Count > 0 ? Store[0].ProcessAsync(context) : TaskHelpers.Completed();
         }

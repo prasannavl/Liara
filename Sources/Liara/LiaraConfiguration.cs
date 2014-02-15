@@ -27,11 +27,13 @@ namespace Liara
         private bool isDefaultHandlerListWired;
         private bool isFormatSelctorWired;
         private bool isFormatterListWired;
+        private bool isFrameworkLoggerWired;
         private bool isLogWriterWired;
         private bool isResponseSynchronizerWired;
         private bool isRouteMapped;
         private bool isServicesContainerWired;
         private bool isStatusHandlerWired;
+        private bool isTraceWriterWired;
 
         private ILiaraLogWriter logWriter;
 
@@ -40,6 +42,7 @@ namespace Liara
         private bool serviceDiscoveryComplete;
         private ILiaraServicesContainer servicesContainer;
         private ILiaraStatusHandler statusHandler;
+        private ILiaraLogWriter traceWriter;
 
         public LiaraConfiguration()
         {
@@ -130,6 +133,16 @@ namespace Liara
             }
         }
 
+        public ILiaraLogWriter TraceWriter
+        {
+            get { return traceWriter; }
+            set
+            {
+                traceWriter = value;
+                isTraceWriterWired = true;
+            }
+        }
+
         public void Build()
         {
             try
@@ -142,6 +155,10 @@ namespace Liara
                         DiscoverServices();
                     if (!isLogWriterWired)
                         WireLogWriter();
+                    if (!isTraceWriterWired)
+                        WireTraceWriter();
+                    if (!isFrameworkLoggerWired)
+                        WireFrameworkLogger();
                     if (!isRouteMapped)
                         WireRoutes();
                     if (!isDefaultHandlerListWired)
@@ -165,7 +182,7 @@ namespace Liara
             }
             catch (Exception ex)
             {
-                LiaraEngine.FrameworkLogger.WriteException(ex, true);
+                Global.FrameworkLogger.WriteException(ex, true);
             }
         }
 
@@ -178,7 +195,7 @@ namespace Liara
         public virtual void WireLogWriter()
         {
             var logger = Services.GetAll<ILiaraLogWriter>().OrderByDescending(x => x.Priority).FirstOrDefault();
-            logWriter = logger ?? LiaraEngine.FrameworkLogger;
+            logWriter = logger ?? Global.FrameworkLogger;
 
             isLogWriterWired = true;
         }
@@ -191,7 +208,12 @@ namespace Liara
             Handlers.Insert(0, new ResponseFormatHandler());
             if (UseBufferedResponse || UseBufferedRequest)
                 Handlers.Insert(0, new BufferedStreamHandler());
+#if DEBUG
+            Handlers.Insert(0, new TraceHandler());
+#endif
+
             Handlers.Insert(0, new ErrorHandler());
+            Handlers.Insert(0, new LiaraThrottleHandler());
 
             Handlers.Add(new RouteInvocationHandler());
             isDefaultHandlerListWired = true;
@@ -200,7 +222,7 @@ namespace Liara
 
         public virtual void WireRoutes()
         {
-            var routeMapper = new RouteMapper(this);
+            var routeMapper = new RouteManager(this);
             Routes = routeMapper.MapAll();
             isRouteMapped = true;
         }
@@ -256,6 +278,27 @@ namespace Liara
             var discoverer = new DefaultServiceDiscovery(Services);
             discoverer.Discover();
             serviceDiscoveryComplete = true;
+        }
+
+        private void WireFrameworkLogger()
+        {
+            if (traceWriter != null)
+            {
+                var isEnabled = Global.FrameworkLogger.IsEnabled;
+                Global.FrameworkLogger = Services.Get<ILiaraLogWriter>(traceWriter.GetType().Name);
+                Global.FrameworkLogger.IsEnabled = isEnabled;
+            }
+
+            isFrameworkLoggerWired = true;
+        }
+
+        private void WireTraceWriter()
+        {
+            if (traceWriter == null)
+            {
+                traceWriter = logWriter;
+            }
+            isTraceWriterWired = true;
         }
     }
 }
