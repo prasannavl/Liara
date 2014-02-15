@@ -1,0 +1,185 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B3118B92-ED9F-43AE-94E7-A3F4A3CA4A79}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Liara</RootNamespace>
+    <AssemblyName>Liara</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="LightInject">
+      <HintPath>..\..\packages\LightInject.3.0.1.3\lib\net45\LightInject.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Newtonsoft.Json.6.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Common\DynamicDictionary.cs" />
+    <Compile Include="Common\DynamicDictionaryValue.cs" />
+    <Compile Include="Common\ErrorMessage.cs" />
+    <Compile Include="Common\LiaraHeaderEntry.cs" />
+    <Compile Include="ILiaraConfiguration.cs" />
+    <Compile Include="ResponseProcessing\EmptyResponsePreparer.cs" />
+    <Compile Include="ResponseProcessing\ILiaraResponseSynchronizer.cs" />
+    <Compile Include="ILiaraServerEnvironment.cs" />
+    <Compile Include="Common\ILiaraHashTable.cs" />
+    <Compile Include="Common\LiaraCookie.cs" />
+    <Compile Include="Common\LiaraExplorer.cs" />
+    <Compile Include="Common\LiaraHashTable.cs" />
+    <Compile Include="Common\LiaraQValuedItem.cs" />
+    <Compile Include="Common\LiaraStream.cs" />
+    <Compile Include="Common\LiaraStatusHandler.cs" />
+    <Compile Include="Common\MediaType.cs" />
+    <Compile Include="Common\LiaraHeaderQualityFactor.cs" />
+    <Compile Include="Common\QValuedMediaType.cs" />
+    <Compile Include="Constants\MediaTypeConstants.cs" />
+    <Compile Include="Services\ILiaraServicesContainer.cs" />
+    <Compile Include="Formatting\JsonFormatter.cs" />
+    <Compile Include="Formatting\LiaraFormatSelector.cs" />
+    <Compile Include="Formatting\LiaraMediaTypeBasedFormatter.cs" />
+    <Compile Include="Formatting\RazorFormatter.cs" />
+    <Compile Include="Formatting\RawFormatter.cs" />
+    <Compile Include="Formatting\ILiaraFormatSelector.cs" />
+    <Compile Include="Formatting\UrlEncodedFormFormatter.cs" />
+    <Compile Include="Formatting\XmlFormatter.cs" />
+    <Compile Include="Helpers\HeaderHelpers.cs" />
+    <Compile Include="Helpers\ReflectionHelpers.cs" />
+    <Compile Include="MessageHandlers\BufferedStreamHandler.cs" />
+    <Compile Include="MessageHandlers\ErrorHandler.cs" />
+    <Compile Include="MessageHandlers\RequestFormatHandler.cs" />
+    <Compile Include="MessageHandlers\ResponseFormatHandler.cs" />
+    <Compile Include="MessageHandlers\RouteInvocationHandler.cs" />
+    <Compile Include="MessageHandlers\TaskCompletionHandler.cs" />
+    <Compile Include="RequestProcessing\LiaraQueryString.cs" />
+    <Compile Include="Constants\CommonConstants.cs" />
+    <Compile Include="Constants\RequestHeaderConstants.cs" />
+    <Compile Include="Constants\ResponseHeaderConstants.cs" />
+    <Compile Include="Extensions\DynamicExtensions.cs" />
+    <Compile Include="Extensions\TaskHelpersExtensions.cs" />
+    <Compile Include="Helpers\CookieHelpers.cs" />
+    <Compile Include="Helpers\QueryStringHelpers.cs" />
+    <Compile Include="Helpers\StringHelpers.cs" />
+    <Compile Include="ILiaraContext.cs" />
+    <Compile Include="ILiaraEngine.cs" />
+    <Compile Include="LiaraModule.cs" />
+    <Compile Include="RequestProcessing\ILiaraRequest.cs" />
+    <Compile Include="RequestProcessing\LiaraRequestInfo.cs" />
+    <Compile Include="RequestProcessing\LiaraRequestFormatProvider.cs" />
+    <Compile Include="RequestProcessing\LiaraRequestHeaderCollection.cs" />
+    <Compile Include="RequestProcessing\LiaraRequestHeaderCollection.Generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>LiaraRequestHeaderCollection.Generated.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RequestProcessing\LiaraRequestParameters.cs" />
+    <Compile Include="RequestProcessing\LiaraRequestCookieCollection.cs" />
+    <Compile Include="ResponseProcessing\HttpStatusCategory.cs" />
+    <Compile Include="Formatting\ILiaraFormatter.cs" />
+    <Compile Include="Internal\DynamicInvokeAttribute.cs" />
+    <Compile Include="Helpers\TaskHelpers.cs" />
+    <Compile Include="LiaraConfiguration.cs" />
+    <Compile Include="LiaraContext.cs" />
+    <Compile Include="LiaraEngine.cs" />
+    <Compile Include="RequestProcessing\LiaraRequest.cs" />
+    <Compile Include="Formatting\ILiaraFormatProvider.cs" />
+    <Compile Include="ResponseProcessing\ILiaraResponse.cs" />
+    <Compile Include="ResponseProcessing\LiaraHttpStatus.cs" />
+    <Compile Include="ResponseProcessing\LiaraHttpStatus.Generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>LiaraHttpStatus.Generated.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ResponseProcessing\LiaraResponse.cs" />
+    <Compile Include="Logging\ConsoleLogWriter.cs" />
+    <Compile Include="Logging\ILiaraLogWriter.cs" />
+    <Compile Include="Logging\LogWriterFactory.cs" />
+    <Compile Include="MessageHandlers\LiaraMessageHandler.cs" />
+    <Compile Include="MessageHandlers\LiaraMessageHandlerBase.cs" />
+    <Compile Include="MessageHandlers\LiaraMessageHandlerCollection.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="MessageHandlers\RouteResolutionHandler.cs" />
+    <Compile Include="ResponseProcessing\LiaraResponseCookieCollection.cs" />
+    <Compile Include="ResponseProcessing\LiaraResponseFormatProvider.cs" />
+    <Compile Include="ResponseProcessing\LiaraResponseHeaderCollection.cs" />
+    <Compile Include="ResponseProcessing\LiaraResponseHeaderCollection.Generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>LiaraResponseHeaderCollection.Generated.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Routing\AggregatedRoute.cs" />
+    <Compile Include="Routing\Route.cs" />
+    <Compile Include="Routing\RouteMapper.cs" />
+    <Compile Include="Routing\RoutingAttributes.cs" />
+    <Compile Include="MessageHandlers\HttpStatusHandler.cs" />
+    <Compile Include="Common\ILiaraStatusHandler.cs" />
+    <Compile Include="Services\DefaultServicesContainer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ResponseProcessing\HttpStatusCodes.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="RequestProcessing\LiaraRequestHeaderCollection.Generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>LiaraRequestHeaderCollection.Generated.cs</LastGenOutput>
+    </None>
+    <None Include="ResponseProcessing\LiaraHttpStatus.Generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>LiaraHttpStatus.Generated.cs</LastGenOutput>
+      <Parameters>&lt;%3fxml version="1.0" encoding="utf-16"%3f&gt;
+&lt;ArrayOfParameterStorage xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" /&gt;</Parameters>
+    </None>
+    <None Include="ResponseProcessing\LiaraResponseHeaderCollection.Generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>LiaraResponseHeaderCollection.Generated.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
