@@ -3,7 +3,7 @@
 // Copyright (c) Launchark Technologies. All rights reserved.
 // See License.txt in the project root for license information.
 // 
-// Created: 1:07 PM 15-02-2014
+// Created: 12:49 PM 16-02-2014
 
 using System;
 using System.Collections.Generic;
@@ -96,13 +96,17 @@ namespace Liara.Services
 
             if (Global.FrameworkLogger.IsEnabled)
             {
-                foreach (var serviceRegistration in serviceContainer.AvailableServices)
+                var services = serviceContainer.AvailableServices.GroupBy(x => x.ServiceType);
+                foreach (var serviceRegistration in services)
                 {
-                    Global.FrameworkLogger.WriteTo("Registered Services", "{0}Type: {1}",
-                        string.IsNullOrWhiteSpace(serviceRegistration.ServiceName)
-                            ? string.Empty
-                            : "Name: " + serviceRegistration.ServiceName + ", ",
-                        serviceRegistration.ServiceType);
+                    var list = serviceRegistration.ToList();
+                    var typeNames = list.Count > 1
+                        ? list.Select(r => r.ServiceName)
+                        : list.Select(r => r.ImplementingType.Name);
+
+                    Global.FrameworkLogger.WriteTo("Registered Services", "{0} \r\n\r\n{1}",
+                        serviceRegistration.Key + "\r\n" + new string('-' , serviceRegistration.Key.ToString().Length), 
+                        "  " + String.Join("\r\n  ", typeNames) + "\r\n");
                 }
             }
         }

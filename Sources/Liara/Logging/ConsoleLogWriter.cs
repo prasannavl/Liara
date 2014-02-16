@@ -21,7 +21,7 @@ namespace Liara.Logging
         public delegate void MessageReceived(object sender, LogMessage args);
 
         private static readonly IndentedConsoleWriter ConsoleWriter = new IndentedConsoleWriter();
-        private readonly object lockObj = new object();
+        private static readonly object ConsoleLockObj = new object();
 
         public ConsoleLogWriter()
         {
@@ -135,36 +135,36 @@ namespace Liara.Logging
             messageThrottler.Buffer(TimeSpan.FromSeconds(1)).Subscribe(events =>
             {
                 var count = events.Count;
-                if (count > 0)
+                if (count < 1) return;
+
+                lock (ConsoleLockObj)
                 {
-                    lock (lockObj)
+                    if (count > 1)
                     {
-                        if (count > 1)
+                        Console.WriteLine();
+                        WriteDateTime(events.First().EventArgs.TimeStamp, suffix: " : \r\n");
+
+                        var category = events.GroupBy(e => e.EventArgs.LogName);
+
+                        foreach (var items in category)
                         {
-                            Console.WriteLine();
-                            WriteDateTime(events.First().EventArgs.TimeStamp, suffix: " : \r\n");
-                            Console.WriteLine();
-
-                            var category = events.GroupBy(e => e.EventArgs.LogName);
-
-                            foreach (var items in category)
+                            if (items.Count() > 1)
                             {
-                                if (items.Count() > 1)
-                                {
-                                    WriteMultiLine(items);
-                                }
-                                else
-                                {
-                                    var evt = items.First().EventArgs;
-                                    WriteSingleLine(evt);
-                                }
+                                WriteMultiLine(items);
+                            }
+                            else
+                            {
+                                Console.WriteLine();
+                                var evt = items.First().EventArgs;
+                                WriteSingleLine(evt);
                             }
                         }
-                        else if (count == 1)
-                        {
-                            var evt = events.First().EventArgs;
-                            WriteSingleLine(evt);
-                        }
+                        Console.WriteLine();
+                    }
+                    else if (count == 1)
+                    {
+                        var evt = events.First().EventArgs;
+                        WriteSingleLine(evt);
                     }
                 }
             });
@@ -180,10 +180,10 @@ namespace Liara.Logging
 
         private void WriteMultiLine(IGrouping<string, EventPattern<LogMessage>> items)
         {
-            var color = Console.ForegroundColor;
+            Console.WriteLine();
             Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.WriteLine(items.Key + ":");
-            Console.ForegroundColor = color;
+            Console.ResetColor();
             Console.WriteLine();
             foreach (var message in items)
             {
@@ -194,10 +194,9 @@ namespace Liara.Logging
 
         private void WriteDateTime(DateTime value, string prefix = null, string suffix = null, string stringFormat = "s")
         {
-            var color = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.White;
             Console.Write(prefix + value.ToString(stringFormat) + suffix);
-            Console.ForegroundColor = color;
+            Console.ResetColor();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -215,7 +214,7 @@ namespace Liara.Logging
 
         private void WriteExceptionInternal(string logName, Exception exception)
         {
-            lock (lockObj)
+            lock (ConsoleLockObj)
             {
                 Console.WriteLine();
                 Console.ForegroundColor = ConsoleColor.Red;
@@ -228,10 +227,9 @@ namespace Liara.Logging
 
         private void WriteCurrentDateTime()
         {
-            var color = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.White;
             Console.Write(DateTime.Now.ToString("s"));
-            Console.ForegroundColor = color;
+            Console.ResetColor();
         }
 
         private void WriteExceptionHandler(string logName, Exception exception)

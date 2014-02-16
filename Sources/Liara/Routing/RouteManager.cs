@@ -3,7 +3,7 @@
 // Copyright (c) Launchark Technologies. All rights reserved.
 // See License.txt in the project root for license information.
 // 
-// Created: 8:31 AM 15-02-2014
+// Created: 12:49 PM 16-02-2014
 
 using System;
 using System.Collections.Generic;
@@ -48,6 +48,7 @@ namespace Liara.Routing
                     MethodInfo = aggRoute.ActionMethodInfo,
                     Handlers = aggRoute.Handlers,
                 };
+
 
                 if (route.MethodInfo.DeclaringType == null)
                     throw new ArgumentNullException("route->" + "MethodInfo->DeclaringType");
@@ -123,16 +124,22 @@ namespace Liara.Routing
 
                 foreach (var item in aggRoute.RequestMethods)
                 {
+                    if (Global.FrameworkLogger.IsEnabled)
+                    {
+                        Global.FrameworkLogger.WriteTo("Routes", "{0,-8} : {1} {2} {3}",
+                            item,
+                            string.IsNullOrWhiteSpace(route.Path) ? "/" : route.Path,
+                            route.RequestDtoType == null ? string.Empty : " - In: " + route.RequestDtoType.Name,
+                            route.ActionReturnType == LiaraActionReturnType.Task
+                                ? " - Out : Task - " +
+                                  string.Join(",",
+                                      route.MethodInfo.ReturnType.GetGenericArguments().ToList().Select(x => x.FullName))
+                                : " - Out : " + route.MethodInfo.ReturnType);
+                    }
+                    
                     Route[] existingRoutes;
-                    List<Route> routeList;
-                    if (routeDictionary.TryGetValue(item, out existingRoutes))
-                    {
-                        routeList = existingRoutes.ToList();
-                    }
-                    else
-                    {
-                        routeList = new List<Route>();
-                    }
+                    var routeList = routeDictionary.TryGetValue(item, out existingRoutes) ? existingRoutes.ToList() : new List<Route>();
+
                     routeList.Add(route);
 
                     // Sort by priority. Higher priority on top of the list.

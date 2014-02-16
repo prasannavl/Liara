@@ -5,6 +5,8 @@
 // 
 // Created: 2:34 AM 16-02-2014
 
+using System;
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 using Liara.Common;
@@ -15,19 +17,30 @@ namespace Liara.MessageHandlers
     {
         public override async Task ProcessAsync(ILiaraContext context)
         {
-            WriteEnvironment(context, true);
-            await base.ProcessAsync(context);
+            var stopwatch = new Stopwatch();
             WriteEnvironment(context, false);
+            stopwatch.Start();
+            await base.ProcessAsync(context);
+            stopwatch.Stop();
+            WriteEnvironment(context, true, stopwatch.Elapsed);
         }
 
-        public void WriteEnvironment(ILiaraContext context, bool requestIn)
+        public void WriteEnvironment(ILiaraContext context, bool responseOutStage, TimeSpan? timeTaken = null)
         {
             var sb = new StringBuilder();
-            sb.AppendLine("-----------------");
+            var separator = new string('-', 20);
+            sb.AppendLine(separator);
             sb.AppendLine();
-            sb.AppendLine(requestIn ? "Request-In - Environment Items:" : "Response-Out - Environment Items:");
+            sb.AppendLine(responseOutStage ? "Response Out - Environment Items:" : "Request In - Environment Items:");
             sb.AppendLine();
-            sb.AppendLine();
+
+            if (responseOutStage)
+            {
+                sb.AppendLine();
+                sb.AppendLine(string.Format("Time taken for request: {0}", timeTaken));
+                sb.AppendLine();
+            }
+
             foreach (var prop in context.Environment.GetType().GetProperties())
             {
                 sb.Append(prop.Name + " : ");
@@ -53,7 +66,7 @@ namespace Liara.MessageHandlers
                 }
             }
             sb.AppendLine();
-            sb.AppendLine("-----------------");
+            sb.AppendLine(separator);
             context.Trace.WriteTo("Request Tracing", sb.ToString());
         }
     }

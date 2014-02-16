@@ -6,8 +6,11 @@
 // Created: 8:31 AM 15-02-2014
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
+using System.Security.Cryptography;
 using Liara.Common;
 using Liara.Formatting;
 using Liara.Logging;
@@ -171,6 +174,8 @@ namespace Liara
                         WireStatusHandler();
                     if (!isResponseSynchronizerWired)
                         WireResponseSynchronizer();
+
+                    LogConfiguration();
                 }
 
                 if (Handlers.Last().InnerHandler == null)
@@ -183,6 +188,43 @@ namespace Liara
             catch (Exception ex)
             {
                 Global.FrameworkLogger.WriteException(ex, true);
+            }
+        }
+
+        private void LogConfiguration()
+        {
+            if (Global.FrameworkLogger.IsEnabled)
+            {
+                foreach (var prop in typeof(ILiaraConfiguration).GetProperties())
+                {
+                    try
+                    {
+                        if (prop.Name == "Routes") continue;
+
+                        var value = prop.GetValue(this);
+                        var type = value.GetType();
+                        if (type == typeof (LiaraMessageHandlerCollection))
+                        {
+                            var values = (from handler in this.Handlers select handler.GetType().Name).ToList();
+                            Global.FrameworkLogger.WriteTo("Configuration", "\r\n{0}\r\n{1}", prop.Name + "\r\n" + new string('-', prop.Name.Length),
+                                "\r\n" + String.Join("\r\n", values) + "\r\n");
+
+                        }
+                        else if (type.IsGenericType && type.GetGenericTypeDefinition().Name == "List`1")
+                        {
+                            var valueList = (IList) value;
+                            var values = (from object item in valueList select item.GetType().Name).ToList();
+
+                            Global.FrameworkLogger.WriteTo("Configuration", "\r\n{0}\r\n{1}", prop.Name + "\r\n" + new string('-', prop.Name.Length),
+                                "\r\n" + String.Join("\r\n", values) + "\r\n");
+                        }
+                        else
+                        {
+                            Global.FrameworkLogger.WriteTo("Configuration", "{0,-22} : {1}", prop.Name, value);
+                        }
+                    }
+                    catch { }
+                }
             }
         }
 

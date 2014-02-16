@@ -15,7 +15,7 @@ namespace Liara
 
         static Global()
         {
-            FrameworkLogger.IsEnabled = false;
+            FrameworkLogger.IsEnabled = true;
         }
     }
 }

@@ -42,7 +42,6 @@ namespace Liara.Demos.Routing
             var config = new LiaraConfiguration();
             //config.Handlers.Add(new HelloHandler());
             config.Build();
-            config.Services.Register(typeof (string), "The Helloku stingo!", "hellostring");
             return config;
         }
 
