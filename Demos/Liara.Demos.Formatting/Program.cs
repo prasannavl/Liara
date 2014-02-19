@@ -66,8 +66,9 @@ namespace Liara.Demos.Formatting
     public class HelloModule : LiaraModule
     {
         [Route("/")]
-        public async void Test()
+        public void Test()
         {
+            
         }
     }
 }

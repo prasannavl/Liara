@@ -6,11 +6,12 @@
 // Created: 12:49 PM 16-02-2014
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Liara.Constants;
@@ -19,10 +20,9 @@ namespace Liara.Logging
 {
     public sealed class ConsoleLogWriter : ILiaraLogWriter
     {
-        public delegate void MessageReceived(object sender, LogMessage args);
-
         private static readonly IndentedConsoleWriter ConsoleWriter = new IndentedConsoleWriter();
         private static readonly object ConsoleLockObj = new object();
+        private Subject<LogMessage> messagePump;
         private int priority = LiaraServiceConstants.OrderDefault;
 
         public ConsoleLogWriter()
@@ -136,48 +136,6 @@ namespace Liara.Logging
                 throw exception;
         }
 
-        private void SetupListener()
-        {
-            var messageThrottler = Observable.FromEventPattern<LogMessage>(this, "OnMessageReceived");
-            messageThrottler.Buffer(TimeSpan.FromSeconds(1)).Subscribe(events =>
-            {
-                var count = events.Count;
-                if (count < 1) return;
-
-                lock (ConsoleLockObj)
-                {
-                    if (count > 1)
-                    {
-                        Console.WriteLine();
-                        WriteDateTime(events.First().EventArgs.TimeStamp, suffix: " : \r\n");
-
-                        var category = events.GroupBy(e => e.EventArgs.LogName);
-
-                        foreach (var items in category)
-                        {
-                            if (items.Count() > 1)
-                            {
-                                WriteMultiLine(items);
-                            }
-                            else
-                            {
-                                Console.WriteLine();
-                                var evt = items.First().EventArgs;
-                                WriteSingleLine(evt);
-                            }
-                        }
-                        Console.WriteLine();
-                    }
-                    else if (count == 1)
-                    {
-                        var evt = events.First().EventArgs;
-                        WriteSingleLine(evt);
-                    }
-                }
-            });
-        }
-
-        public event MessageReceived OnMessageReceived;
 
         private void WriteSingleLine(LogMessage message)
         {
@@ -185,7 +143,7 @@ namespace Liara.Logging
             Console.WriteLine(" - {0}: {1}", message.LogName, message.Message);
         }
 
-        private void WriteMultiLine(IGrouping<string, EventPattern<LogMessage>> items)
+        private void WriteMultiLine(IGrouping<string, LogMessage> items)
         {
             Console.WriteLine();
             Console.ForegroundColor = ConsoleColor.DarkGray;
@@ -194,8 +152,8 @@ namespace Liara.Logging
             Console.WriteLine();
             foreach (var message in items)
             {
-                if (!string.IsNullOrWhiteSpace(message.EventArgs.Message))
-                    Console.WriteLine(message.EventArgs.Message);
+                if (!string.IsNullOrWhiteSpace(message.Message))
+                    Console.WriteLine(message.Message);
             }
         }
 
@@ -279,7 +237,50 @@ namespace Liara.Logging
 
         private void WriteInternal(string logName, string message)
         {
-            OnMessageReceived(this, new LogMessage {LogName = logName, Message = message, TimeStamp = DateTime.Now});
+            messagePump.OnNext(new LogMessage {LogName = logName, Message = message, TimeStamp = DateTime.Now});
+        }
+
+        private void MessageReceivedAction(IList<LogMessage> events)
+        {
+            var count = events.Count;
+            if (count < 1) return;
+
+            lock (ConsoleLockObj)
+            {
+                if (count > 1)
+                {
+                    Console.WriteLine();
+                    WriteDateTime(events.First().TimeStamp, suffix: " : \r\n");
+
+                    var category = events.GroupBy(e => e.LogName);
+
+                    foreach (var items in category)
+                    {
+                        if (items.Count() > 1)
+                        {
+                            WriteMultiLine(items);
+                        }
+                        else
+                        {
+                            Console.WriteLine();
+                            var evt = items.First();
+                            WriteSingleLine(evt);
+                        }
+                    }
+                    Console.WriteLine();
+                }
+                else if (count == 1)
+                {
+                    var evt = events.First();
+                    WriteSingleLine(evt);
+                }
+            }
+        }
+
+        private void SetupListener()
+        {
+            messagePump = new Subject<LogMessage>();
+            messagePump.Buffer(TimeSpan.FromSeconds(1)).Subscribe(MessageReceivedAction);
         }
 
         private class IndentedConsoleWriter : TextWriter

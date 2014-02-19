@@ -45,13 +45,15 @@ namespace Liara.Formatting
 
                     if (viewName == null)
                     {
+
+                        var routePath = route.Path.Trim('/');
                         // Look for ViewPath\UrlPath{ext}
-                        paths.Add(Path.Combine(viewLocation, route.Path + viewFileExtension));
+                        paths.Add(Path.Combine(viewLocation, routePath + viewFileExtension));
 
                         // Look for ViewPath\UrlPath\{DefaultFiles}{ext}
                         foreach (var viewDefaultFile in ViewDefaultFiles)
                         {
-                            paths.Add(Path.Combine(viewLocation, route.Path, viewDefaultFile + viewFileExtension));
+                            paths.Add(Path.Combine(viewLocation, routePath, viewDefaultFile + viewFileExtension));
                         }
 
 
