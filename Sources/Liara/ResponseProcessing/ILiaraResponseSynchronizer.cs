@@ -5,11 +5,12 @@
 // 
 // Created: 8:31 AM 15-02-2014
 
+using Liara.Common;
+
 namespace Liara.ResponseProcessing
 {
-    public interface ILiaraResponseSynchronizer
+    public interface ILiaraResponseSynchronizer : ILiaraPrioritizedService
     {
-        int Priority { get; set; }
         void Synchronize(ILiaraContext context);
     }
 }

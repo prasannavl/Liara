@@ -88,7 +88,7 @@ namespace Liara.Helpers
                         qValuedHeader.QValue = parsed ? q : 1;
                         qAdded = true;
                     }
-                    else if (qValuedHeader.Value != null)
+                    else if (qValuedHeader.Value == null)
                     {
                         qValuedHeader.Value = part;
                     }
@@ -133,7 +133,7 @@ namespace Liara.Helpers
         public static IEnumerable<QValuedMediaType> GetQValuedMediaTypeHeaders(string mediaTypeString)
         {
             var parsedSegments = ParseHttpHeaderValue(mediaTypeString);
-            foreach (List<string> segment in parsedSegments)
+            foreach (var segment in parsedSegments)
             {
                 var mediaType = new QValuedMediaType();
                 var qAdded = false;
@@ -191,6 +191,7 @@ namespace Liara.Helpers
                 }
                 catch
                 {
+
                 }
                 if (encoding != null)
                     yield return encoding;
@@ -231,7 +232,7 @@ namespace Liara.Helpers
                     if (split.Length == 2)
                         mediaType = new MediaType(split[0], split[1]);
                 }
-                else if (charset == null && item.StartsWith("charset="))
+                else if (charset == null && item.StartsWith("charset=", StringComparison.OrdinalIgnoreCase))
                 {
                     Encoding encoding = null;
                     try

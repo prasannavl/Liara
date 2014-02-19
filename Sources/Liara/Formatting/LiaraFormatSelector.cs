@@ -3,29 +3,85 @@
 // Copyright (c) Launchark Technologies. All rights reserved.
 // See License.txt in the project root for license information.
 // 
-// Created: 8:31 AM 15-02-2014
+// Created: 12:49 PM 16-02-2014
 
 using System;
 using System.Linq;
+using Liara.Common;
+using Liara.Constants;
 
 namespace Liara.Formatting
 {
     public class LiaraFormatSelector : ILiaraFormatSelector
     {
-        public virtual int Priority { get; set; }
+        private int priority = LiaraServiceConstants.PriorityLow;
+
+        public virtual int Priority
+        {
+            get { return priority; }
+            set { priority = value; }
+        }
 
         public virtual ILiaraFormatter GetRequestFormatter(Type readAsType, ILiaraContext context)
         {
+            ILiaraFormatter[] formatterArray;
+
+            if (context.Engine.Configuration.Formatters.MediaMap.TryGetValue(
+                context.Request.Format.MediaType.ToString().ToLower(),
+                out formatterArray))
+            {
+                foreach (ILiaraFormatter liaraFormatter in formatterArray)
+                {
+                    if (liaraFormatter.CanRead(readAsType, context))
+                        return liaraFormatter;
+                }
+            }
+
             return
                 context.Engine.Configuration.Formatters.FirstOrDefault(
-                    liaraFormatter => liaraFormatter.CanRead(readAsType, context));
+                    formatter => formatter.CanRead(readAsType, context));
         }
 
         public virtual ILiaraFormatter GetResponseFormatter(Type inputObjectType, ILiaraContext context)
         {
+            ILiaraFormatter[] formatterArray;
+
+            if (context.Route != null && context.Route.PathExtension != null)
+            {
+                if (context.Engine.Configuration.Formatters.UrlMap.TryGetValue(
+                    context.Route.PathExtension.ToLower(),
+                    out formatterArray))
+                {
+                    foreach (ILiaraFormatter liaraFormatter in formatterArray)
+                    {
+                        if (liaraFormatter.CanWrite(inputObjectType, context))
+                        {
+                            context.Response.Format.MediaType = liaraFormatter.GetDefaultMediaType();
+                            return liaraFormatter;
+                        }
+                    }
+                }
+            }
+
+            foreach (var acceptedMediaType in context.Response.Format.AcceptedMediaTypes)
+            {
+                if (context.Engine.Configuration.Formatters.MediaMap.TryGetValue(
+                    MediaType.FromDerivedMediaType(acceptedMediaType).ToString().ToLower(), out formatterArray))
+                {
+                    foreach (ILiaraFormatter liaraFormatter in formatterArray)
+                    {
+                        if (liaraFormatter.CanWrite(inputObjectType, context))
+                        {
+                            context.Response.Format.MediaType = acceptedMediaType;
+                            return liaraFormatter;
+                        }
+                    }
+                }
+            }
+
             return
                 context.Engine.Configuration.Formatters.FirstOrDefault(
-                    liaraFormatter => liaraFormatter.CanWrite(inputObjectType, context));
+                    formatter => formatter.CanWrite(inputObjectType, context));
         }
     }
 }

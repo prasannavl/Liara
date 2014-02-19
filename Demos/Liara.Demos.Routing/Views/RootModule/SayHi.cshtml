@@ -1,0 +1,17 @@
+﻿@using System
+@inherits Liara.Formatting.LiaraRazorTemplateBase<string>
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Hello!</title>
+</head>
+<body>
+    @DateTime.Now
+    <br/>
+    Hello.
+    
+    @Model
+</body>
+</html>

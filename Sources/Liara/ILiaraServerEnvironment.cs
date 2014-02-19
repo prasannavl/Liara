@@ -19,14 +19,14 @@ namespace Liara
         string RequestPathBase { get; set; }
         string RequestProtocol { get; set; }
         string RequestMethod { get; set; }
-        ILiaraHashTable RequestHeaders { get; set; }
+        ILiaraHashTable<string> RequestHeaders { get; set; }
         LiaraStream RequestBody { get; set; }
 
 
         int ResponseStatusCode { get; set; }
         string ResponseStatusDescription { get; set; }
         string ResponseProtocol { get; set; }
-        ILiaraHashTable ResponseHeaders { get; set; }
+        ILiaraHashTable<string> ResponseHeaders { get; set; }
         LiaraStream ResponseBody { get; set; }
 
 

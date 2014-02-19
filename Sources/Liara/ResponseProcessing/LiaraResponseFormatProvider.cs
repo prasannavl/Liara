@@ -65,6 +65,8 @@ namespace Liara.ResponseProcessing
             set { culture = value; }
         }
 
+        public string View { get; set; }
+
         public IEnumerable<QValuedMediaType> AcceptedMediaTypes
         {
             get

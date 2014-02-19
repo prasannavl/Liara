@@ -7,12 +7,12 @@
 
 using System;
 using System.Threading.Tasks;
+using Liara.Common;
 
 namespace Liara.Logging
 {
-    public interface ILiaraLogWriter
+    public interface ILiaraLogWriter : ILiaraPrioritizedService
     {
-        int Priority { get; set; }
         bool IsEnabled { get; set; }
 
         /// <summary>

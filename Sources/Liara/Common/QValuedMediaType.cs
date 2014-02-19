@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Web.Razor.Editor;
 
 namespace Liara.Common
 {
@@ -40,10 +41,9 @@ namespace Liara.Common
 
         public bool Equals(QValuedMediaType other)
         {
-            return
-                other.Group == Group &&
-                other.Type == Type &&
-                other.ExtendedTokens.SequenceEqual(ExtendedTokens) &&
+            return 
+                base.Equals(other) &&
+                other.ExtendedTokens.SequenceEqual(ExtendedTokens, StringComparer.OrdinalIgnoreCase) &&
                 other.QValue == QValue;
         }
 
@@ -58,9 +58,10 @@ namespace Liara.Common
         {
             var sb = new StringBuilder(Group + "/" + Type);
             if (QValue < 1) sb.Append(";q=" + QValue);
-            if (ExtendedTokens != null) sb.Append(";" + String.Join(";", ExtendedTokens));
+            if (ExtendedTokens.Count > 0) sb.Append(";" + String.Join(";", ExtendedTokens));
 
             return sb.ToString();
         }
+
     }
 }

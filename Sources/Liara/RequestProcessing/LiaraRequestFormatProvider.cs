@@ -90,7 +90,7 @@ namespace Liara.RequestProcessing
             catch (Exception ex)
             {
                 context.Response.Status = LiaraHttpStatus.BadRequest;
-                context.Log.WriteExceptionAsync(ex);
+                context.Log.WriteExceptionToAsync("Bad Requests and Format Error", ex);
                 return TaskHelpers.NullResult();
             }
         }

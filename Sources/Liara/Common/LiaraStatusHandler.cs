@@ -3,13 +3,13 @@
 // Copyright (c) Launchark Technologies. All rights reserved.
 // See License.txt in the project root for license information.
 // 
-// Created: 8:31 AM 15-02-2014
+// Created: 12:49 PM 16-02-2014
 
 namespace Liara.Common
 {
     public class LiaraStatusHandler : ILiaraStatusHandler
     {
-        private int priority = -1;
+        private int priority = Constants.LiaraServiceConstants.PriorityLowest;
 
         public int Priority
         {
@@ -17,59 +17,31 @@ namespace Liara.Common
             set { priority = value; }
         }
 
-        // TODO: Handle all common status messages, with reasonable defaults.
-        public bool HandleStatus(ILiaraContext context)
+        public virtual bool HandleStatus(ILiaraContext context)
         {
             switch (context.Response.Status.Code)
             {
                 case 200:
                 {
-                    return false;
-                }
-                case 400:
-                {
-                    HandleBadRequest(context);
                     return true;
                 }
-                case 404:
+                default:
                 {
-                    HandleNotFound(context);
-                    return true;
-                }
-                case 405:
-                {
-                    HandleMethodNotAllowed(context);
-                    return true;
-                }
-                case 500:
-                {
-                    HandleInternalServerError(context);
+                    SetContentAsErrorMessage(context);
                     return true;
                 }
             }
-            return false;
         }
 
-        //TODO : Add error-data structures.
-
-        private void HandleBadRequest(ILiaraContext context)
+        public virtual void SetContentAsErrorMessage(ILiaraContext context)
         {
-            context.Response.Content = "Bad request.";
-        }
-
-        private void HandleMethodNotAllowed(ILiaraContext context)
-        {
-            context.Response.Content = "Method not allowed.";
-        }
-
-        private void HandleInternalServerError(ILiaraContext context)
-        {
-            context.Response.Content = "Internal server error.";
-        }
-
-        private void HandleNotFound(ILiaraContext context)
-        {
-            context.Response.Content = "Not found.";
+            if (context.Response.Content == null || context.Response.Content.GetType() != typeof(ErrorMessage))
+            context.Response.Content = new ErrorMessage
+            {
+                ErrorCode = context.Response.Status.Code,
+                Description = context.Response.Status.Description,
+                Message = context.Response.Content
+            };
         }
     }
 }

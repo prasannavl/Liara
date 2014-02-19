@@ -3,14 +3,13 @@
 // Copyright (c) Launchark Technologies. All rights reserved.
 // See License.txt in the project root for license information.
 // 
-// Created: 12:44 PM 15-02-2014
+// Created: 1:44 AM 17-02-2014
 
-namespace Liara.Services
+namespace Liara.Formatting
 {
-    public enum LiaraServiceLifeTime
+    public interface ILiaraViewProvider
     {
-        Transient,
-        PerRequest,
-        Singleton
+        string GetView(ILiaraContext context);
+        string GetInternalView(ILiaraContext context);
     }
 }

@@ -1,0 +1,18 @@
+﻿@inherits Liara.Formatting.LiaraRazorTemplateBase<Liara.Common.ErrorMessage>
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>@Model.Description</title>
+</head>
+<body>
+    <h3>Error Code: <b>@Model.ErrorCode</b></h3>
+    <p>
+        @{ WriteLiteral(Model.Description); }.
+    </p>
+    <p>
+        @Model.Message
+    </p>
+</body>
+</html>

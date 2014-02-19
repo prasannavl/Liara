@@ -15,10 +15,7 @@ namespace Liara.Helpers
 {
     public static class ReflectionHelpers
     {
-        public static Assembly GetExecutingAssembly()
-        {
-            return Assembly.GetExecutingAssembly();
-        }
+        public static Assembly LiaraAssembly = Assembly.GetExecutingAssembly();
 
         public static IEnumerable<Assembly> GetAllAssemblies()
         {

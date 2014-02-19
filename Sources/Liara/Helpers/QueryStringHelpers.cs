@@ -18,7 +18,7 @@ namespace Liara.Helpers
 
         private static readonly Action<string, string, object> AppendItemCallback = (name, value, state) =>
         {
-            var queryStringCollection = (ILiaraHashTable) state;
+            var queryStringCollection = (ILiaraHashTable<string>)state;
             queryStringCollection.AppendValue(name, value);
         };
 
@@ -29,9 +29,9 @@ namespace Liara.Helpers
         /// <param name="text"></param>
         /// <param name="isCaseSensitive"></param>
         /// <returns></returns>
-        public static ILiaraHashTable ParseFromString(string text, bool isCaseSensitive = false)
+        public static ILiaraHashTable<string> ParseFromString(string text, bool isCaseSensitive = false)
         {
-            var qs = new LiaraHashTable(isCaseSensitive);
+            var qs = new LiaraStringHashTable(isCaseSensitive);
             StringHelpers.ParseUrlEncodedString(text, AmpersandAndSemicolon, AppendItemCallback, qs);
             return qs;
         }
@@ -41,7 +41,7 @@ namespace Liara.Helpers
         ///     to the Uri component, including the leading "?".
         /// </summary>
         /// <returns>Correct query string, with the leading "?"</returns>
-        public static string ConvertToUriString(ILiaraHashTable queryString, char seperator = '&',
+        public static string ConvertToUriString(ILiaraHashTable<string> queryString, char seperator = '&',
             bool prefixQuestionMark = true)
         {
             if (queryString.Count < 1)

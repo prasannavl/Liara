@@ -3,10 +3,11 @@
 // Copyright (c) Launchark Technologies. All rights reserved.
 // See License.txt in the project root for license information.
 // 
-// Created: 8:31 AM 15-02-2014
+// Created: 12:49 PM 16-02-2014
 
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Liara.MessageHandlers;
 using Microsoft.Owin.Hosting;
@@ -18,16 +19,18 @@ namespace Liara.Demos.Routing
     {
         private static void Main(string[] args)
         {
-            var url = "http://localhost:12345";
-            Console.WriteLine("Listening at {0}", url);
+            var url = "http://+:12345";
+
+            var namedUrl = url.Replace("+", "localhost");
+
+            Console.WriteLine("Listening at {0}", namedUrl);
             Console.WriteLine();
 
-            LiaraThrottleHandler.MaxConcurrentRequests = 10;
             Global.FrameworkLogger.IsEnabled = true;
 
             using (WebApp.Start<Startup>(url))
             {
-                Process.Start(url);
+                Process.Start(namedUrl);
                 Console.ReadLine();
             }
 
@@ -41,7 +44,13 @@ namespace Liara.Demos.Routing
         {
             var config = new LiaraConfiguration();
             //config.Handlers.Add(new HelloHandler());
+
             config.Build();
+            //config.Handlers.Remove(config.Handlers.FirstOrDefault(x => x.GetType() == typeof (LiaraThrottleHandler)));
+
+            //var throttleHandler = new LiaraThrottleHandler {MaxConcurrentRequests = 10};
+            //config.Handlers.Insert(0, throttleHandler);
+
             return config;
         }
 
@@ -105,9 +114,8 @@ namespace Liara.Demos.Routing
         [RouteMethod("POST")]
         [Route("/new", routeName: "route2", priority: 5)]
         [RouteMethod("GET", "route2")]
-        public async Task<object> SayHi()
+        public object SayHi()
         {
-            await Task.Delay(50);
             return "\r\nJust saying hi..";
         }
 

@@ -6,12 +6,12 @@
 // Created: 8:31 AM 15-02-2014
 
 using System;
+using Liara.Common;
 
 namespace Liara.Formatting
 {
-    public interface ILiaraFormatSelector
+    public interface ILiaraFormatSelector : ILiaraPrioritizedService
     {
-        int Priority { get; set; }
         ILiaraFormatter GetRequestFormatter(Type readAsType, ILiaraContext context);
         ILiaraFormatter GetResponseFormatter(Type inputObjectType, ILiaraContext context);
     }

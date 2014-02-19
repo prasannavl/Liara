@@ -25,9 +25,9 @@ namespace Liara.Hosting.Owin
         private bool isUriCacheValid;
 
         private LiaraStream requestBody;
-        private ILiaraHashTable requestHeaders;
+        private ILiaraHashTable<string> requestHeaders;
         private LiaraStream responseBody;
-        private ILiaraHashTable responseHeaders;
+        private ILiaraHashTable<string> responseHeaders;
         private Uri uri;
 
         public OwinServerEnvCache(OwinServerEnvironment environment)
@@ -63,14 +63,14 @@ namespace Liara.Hosting.Owin
             }
         }
 
-        public ILiaraHashTable RequestHeaders
+        public ILiaraHashTable<string> RequestHeaders
         {
             get
             {
                 if (!isRequestHeadersCacheValid)
                 {
                     requestHeaders =
-                        new LiaraHashTable(
+                        new LiaraStringHashTable(
                             environment.Items.Get<IDictionary<string, string[]>>(Constants.OwinConstants.RequestHeaders));
                     isRequestHeadersCacheValid = true;
                 }
@@ -83,14 +83,14 @@ namespace Liara.Hosting.Owin
             }
         }
 
-        public ILiaraHashTable ResponseHeaders
+        public ILiaraHashTable<string> ResponseHeaders
         {
             get
             {
                 if (!isResponseHeadersCacheValid)
                 {
                     responseHeaders =
-                        new LiaraHashTable(
+                        new LiaraStringHashTable(
                             environment.Items.Get<IDictionary<string, string[]>>(Constants.OwinConstants.ResponseHeaders));
                     isResponseHeadersCacheValid = true;
                 }

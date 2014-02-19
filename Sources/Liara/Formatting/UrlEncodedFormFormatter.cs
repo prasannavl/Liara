@@ -14,11 +14,11 @@ using Liara.Helpers;
 
 namespace Liara.Formatting
 {
-    public class UrlEncodedFormFormatter : LiaraMediaTypeBasedFormatter
+    public class UrlEncodedFormFormatter : LiaraFormatter
     {
         private static readonly Action<string, string, object> AppendItemCallback = (name, value, state) =>
         {
-            var formCollection = (ILiaraHashTable) state;
+            var formCollection = (ILiaraHashTable<string>)state;
             formCollection.AppendValue(name, value);
         };
 
@@ -44,9 +44,9 @@ namespace Liara.Formatting
             return null;
         }
 
-        public static ILiaraHashTable ParseForm(string text, bool isCaseSensitive = true)
+        public static ILiaraHashTable<string> ParseForm(string text, bool isCaseSensitive = true)
         {
-            var collection = new LiaraHashTable(isCaseSensitive);
+            var collection = new LiaraStringHashTable(isCaseSensitive);
             StringHelpers.ParseUrlEncodedString(text, new[] {'&'}, AppendItemCallback, collection);
             return collection;
         }

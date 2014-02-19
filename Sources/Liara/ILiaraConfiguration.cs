@@ -1,10 +1,3 @@
-// Author: Prasanna V. Loganathar
-// Project: Liara
-// Copyright (c) Launchark Technologies. All rights reserved.
-// See License.txt in the project root for license information.
-// 
-// Created: 8:31 AM 15-02-2014
-
 using System.Collections.Generic;
 using Liara.Common;
 using Liara.Formatting;
@@ -21,7 +14,7 @@ namespace Liara
         ILiaraServicesContainer Services { get; set; }
         bool UseBufferedRequest { get; set; }
         bool UseBufferedResponse { get; set; }
-        IList<ILiaraFormatter> Formatters { get; set; }
+        LiaraFormatterCollection Formatters { get; set; }
         ILiaraFormatSelector FormatSelector { get; set; }
         ILiaraStatusHandler StatusHandler { get; set; }
         IDictionary<string, IDictionary<string, Route[]>> Routes { get; set; }
@@ -29,6 +22,8 @@ namespace Liara
         ILiaraLogWriter LogWriter { get; set; }
         ILiaraResponseSynchronizer ResponseSynchronizer { get; set; }
         ILiaraLogWriter TraceWriter { get; set; }
+        ILiaraHashTable<object> Items { get; set; }
+        string RootDirectory { get; set; }
         void Build();
         void WireServicesContainer();
         void WireLogWriter();
@@ -39,5 +34,9 @@ namespace Liara
         void WireStatusHandler();
         void WireResponseSynchronizer();
         void DiscoverServices();
+        void Initialize();
+        void LogConfiguration();
+        void WireFrameworkLogger();
+        void WireTraceWriter();
     }
 }

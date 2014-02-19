@@ -3,13 +3,14 @@
 // Copyright (c) Launchark Technologies. All rights reserved.
 // See License.txt in the project root for license information.
 // 
-// Created: 1:16 PM 15-02-2014
+// Created: 12:49 PM 16-02-2014
+
+using Liara.Common;
 
 namespace Liara.Services
 {
-    public interface ILiaraServiceDiscovery
+    public interface ILiaraServiceDiscovery : ILiaraPrioritizedService
     {
-        int Priority { get; set; }
         void Discover();
     }
 }

@@ -10,7 +10,7 @@ using Liara.Common;
 namespace Liara.RequestProcessing
 {
     // TODO RequestParams
-    public class LiaraRequestParameters : LiaraHashTable
+    public class LiaraRequestParameters : LiaraStringHashTable
     {
 
     }

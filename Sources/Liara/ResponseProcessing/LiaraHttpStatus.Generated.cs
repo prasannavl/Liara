@@ -416,6 +416,13 @@ namespace Liara
         /// </summary>
         public static readonly LiaraHttpStatus NetworkAuthenticationRequired = new LiaraHttpStatus(511, "Network Authentication Required", HttpStatusCategory.ServerError);
                 
+        
+        /// <summary>
+        /// Status Code: 555
+        /// Status Description: No View Associated
+        /// </summary>
+        public static readonly LiaraHttpStatus NoViewAssociated = new LiaraHttpStatus(555, "No View Associated", HttpStatusCategory.ServerError);
+                
             
     }
 }

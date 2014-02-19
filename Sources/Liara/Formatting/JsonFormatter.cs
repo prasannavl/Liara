@@ -15,16 +15,23 @@ using Newtonsoft.Json.Linq;
 
 namespace Liara.Formatting
 {
-    public class JsonFormatter : LiaraMediaTypeBasedFormatter
+    public class JsonFormatter : LiaraFormatter
     {
         private readonly JsonSerializerSettings settings;
 
         public JsonFormatter()
         {
+            SupportedUrlExtensions.Add("json");
+
             SupportedMediaTypes.Add(new MediaType(MediaTypeConstants.ApplicationJson));
             SupportedMediaTypes.Add(new MediaType(MediaTypeConstants.TextJson));
 
             settings = new JsonSerializerSettings();
+        }
+
+        public override bool CanWrite(Type inputObjectType, ILiaraContext context)
+        {
+            return true;
         }
 
         public override Task<object> ReadAsync(Type readAsType, Stream inputStream, ILiaraContext context)
@@ -46,7 +53,7 @@ namespace Liara.Formatting
 
         public override Task WriteAsync(object inputObject, Stream targetStream, ILiaraContext context)
         {
-            // TODO: Streamed conversion.
+            // TODO: Optimize memory - Streamed conversion.
             var objType = inputObject.GetType();
             var value = JsonConvert.SerializeObject(inputObject, objType, settings);
             var bytes = context.Response.Format.CharsetEncoding.GetBytes(value);

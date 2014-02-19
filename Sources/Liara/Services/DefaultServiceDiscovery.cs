@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Liara.Common;
+using Liara.Constants;
 using Liara.Formatting;
 using Liara.Logging;
 using Liara.ResponseProcessing;
@@ -19,6 +20,7 @@ namespace Liara.Services
     public class DefaultServiceDiscovery : ILiaraServiceDiscovery
     {
         private readonly ILiaraServicesContainer container;
+        private int priority = LiaraServiceConstants.PriorityLowest;
 
         public DefaultServiceDiscovery(ILiaraServicesContainer container)
         {
@@ -49,7 +51,7 @@ namespace Liara.Services
                 typeof (ILiaraFormatter),
                 typeof (ILiaraStatusHandler),
                 typeof (ILiaraResponseSynchronizer),
-                typeof (ILiaraLogWriter)
+                typeof (ILiaraLogWriter),
             };
 
             this.container = container;
@@ -63,12 +65,17 @@ namespace Liara.Services
         public List<Type> TypeWhiteList { get; set; }
 
         public List<Type> CoreServiceTypes { get; set; }
-        public int Priority { get; set; }
+
+        public int Priority
+        {
+            get { return priority; }
+            set { priority = value; }
+        }
 
         public virtual void Discover()
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
-            var serviceContainer = (IServiceContainer) container.GetContainer();
+            var serviceContainer = (IServiceContainer) container.GetRootContainer();
 
             foreach (var assembly in assemblies)
             {
@@ -105,7 +112,7 @@ namespace Liara.Services
                         : list.Select(r => r.ImplementingType.Name);
 
                     Global.FrameworkLogger.WriteTo("Registered Services", "{0} \r\n\r\n{1}",
-                        serviceRegistration.Key + "\r\n" + new string('-' , serviceRegistration.Key.ToString().Length), 
+                        serviceRegistration.Key + "\r\n" + new string('-', serviceRegistration.Key.ToString().Length),
                         "  " + String.Join("\r\n  ", typeNames) + "\r\n");
                 }
             }

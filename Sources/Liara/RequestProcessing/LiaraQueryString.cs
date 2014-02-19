@@ -10,7 +10,7 @@ using Liara.Helpers;
 
 namespace Liara.RequestProcessing
 {
-    public class LiaraQueryString : LiaraHashTable
+    public class LiaraQueryString : LiaraStringHashTable
     {
         public LiaraQueryString() : base(false)
         {

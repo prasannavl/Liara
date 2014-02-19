@@ -15,7 +15,7 @@ using Liara.Helpers;
 
 namespace Liara.Formatting
 {
-    public class XmlFormatter : LiaraMediaTypeBasedFormatter
+    public class XmlFormatter : LiaraFormatter
     {
         public XmlFormatter()
         {
@@ -25,7 +25,7 @@ namespace Liara.Formatting
 
         public override bool CanRead(Type readAsType, ILiaraContext context)
         {
-            return readAsType == typeof (object) && base.CanRead(readAsType, context);
+            return readAsType != typeof (object);
         }
 
         public override Task<object> ReadAsync(Type readAsType, Stream inputStream, ILiaraContext context)

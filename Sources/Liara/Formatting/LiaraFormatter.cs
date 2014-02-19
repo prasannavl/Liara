@@ -3,7 +3,7 @@
 // Copyright (c) Launchark Technologies. All rights reserved.
 // See License.txt in the project root for license information.
 // 
-// Created: 8:31 AM 15-02-2014
+// Created: 12:49 PM 16-02-2014
 
 using System;
 using System.Collections.Generic;
@@ -14,12 +14,14 @@ using Liara.Common;
 
 namespace Liara.Formatting
 {
-    public abstract class LiaraMediaTypeBasedFormatter : ILiaraFormatter
+    public abstract class LiaraFormatter : ILiaraFormatter
     {
         public IList<MediaType> SupportedMediaTypes;
+        public IList<string> SupportedUrlExtensions;
 
-        public LiaraMediaTypeBasedFormatter()
+        public LiaraFormatter()
         {
+            SupportedUrlExtensions = new List<string>();
             SupportedMediaTypes = new List<MediaType>();
         }
 
@@ -30,40 +32,32 @@ namespace Liara.Formatting
             if (SupportedMediaTypes.Any(supportedMediaType => supportedMediaType.ToString().Contains("*")))
             {
                 throw new ArgumentException(
-                    "MediaType for the formatter is invalid. A specific media type must be given. " +
-                    "To handle all media types, simply over-ride the CanRead/CanWrite methods to avoid the check.");
+                    "MediaType for the formatter is invalid. A LiaraFormatter must have a specific type. " +
+                    "To handle all media types, simply over-ride the CanRead/CanWrite methods to avoid the check, " +
+                    "or implement ILiaraFormatter directly, which imposes no restrictions.");
+            }
+
+            if (SupportedUrlExtensions.Any(supportedUrlExtensions => supportedUrlExtensions.Contains(".")))
+            {
+                throw new ArgumentException("Url extensions should not include the \".\" (dot).");
             }
 
             return true;
         }
 
+        public virtual MediaType GetDefaultMediaType()
+        {
+            return SupportedMediaTypes.FirstOrDefault();
+        }
+
         public virtual bool CanRead(Type readAsType, ILiaraContext context)
         {
-            var mediaType = context.Request.Format.MediaType;
-            return mediaType != null && SupportedMediaTypes.Any(sm => sm.Equals(mediaType));
+            return true;
         }
 
         public virtual bool CanWrite(Type inputObjectType, ILiaraContext context)
         {
-            var accepted = false;
-            foreach (var acceptedMediaType in context.Response.Format.AcceptedMediaTypes)
-            {
-                var mediaType = (MediaType) acceptedMediaType;
-
-                foreach (var supportedMediaType in SupportedMediaTypes)
-                {
-                    var isAcceptable = supportedMediaType.IsCompatible(mediaType);
-                    if (isAcceptable)
-                    {
-                        context.Response.Format.MediaType = supportedMediaType;
-                        accepted = true;
-                        break;
-                    }
-                }
-                if (accepted) break;
-            }
-
-            return accepted;
+            return true;
         }
 
         public virtual void PrepareWrite(ILiaraContext context)

@@ -10,9 +10,9 @@ namespace Liara.Common
     public class LiaraHeaderEntry
     {
         private readonly string fieldName;
-        private readonly ILiaraHashTable headers;
+        private readonly ILiaraHashTable<string> headers;
 
-        public LiaraHeaderEntry(ILiaraHashTable headers, string headerName)
+        public LiaraHeaderEntry(ILiaraHashTable<string> headers, string headerName)
         {
             this.headers = headers;
             fieldName = headerName;

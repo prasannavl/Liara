@@ -33,7 +33,7 @@ namespace Liara
         /// <param name="headers"></param>
         /// <param name="isCaseSensitive"></param>
         /// <returns></returns>
-        internal static IDictionary<string, string> ParseRequestCookies(ILiaraHashTable headers,
+        internal static IDictionary<string, string> ParseRequestCookies(ILiaraHashTable<string> headers,
             bool isCaseSensitive = true)
         {
             var cookies = new Dictionary<string, string>(isCaseSensitive

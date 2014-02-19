@@ -3,14 +3,14 @@
 // Copyright (c) Launchark Technologies. All rights reserved.
 // See License.txt in the project root for license information.
 // 
-// Created: 8:31 AM 15-02-2014
+// Created: 12:49 PM 16-02-2014
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Runtime.Remoting.Contexts;
-using System.Security.Cryptography;
+using System.Reflection;
 using Liara.Common;
 using Liara.Formatting;
 using Liara.Logging;
@@ -24,13 +24,14 @@ namespace Liara
     public class LiaraConfiguration : ILiaraConfiguration
     {
         private ILiaraFormatSelector formatSelector;
-        private IList<ILiaraFormatter> formatters;
+        private LiaraFormatterCollection formatters;
         private LiaraMessageHandlerCollection handlers;
         private bool isBuildComplete;
         private bool isDefaultHandlerListWired;
         private bool isFormatSelctorWired;
         private bool isFormatterListWired;
         private bool isFrameworkLoggerWired;
+        private bool isInitialized;
         private bool isLogWriterWired;
         private bool isResponseSynchronizerWired;
         private bool isRouteMapped;
@@ -41,6 +42,7 @@ namespace Liara
         private ILiaraLogWriter logWriter;
 
         private ILiaraResponseSynchronizer responseSynchronizer;
+        private string rootDirectory;
         private IDictionary<string, IDictionary<string, Route[]>> routes;
         private bool serviceDiscoveryComplete;
         private ILiaraServicesContainer servicesContainer;
@@ -50,7 +52,8 @@ namespace Liara
         public LiaraConfiguration()
         {
             handlers = new LiaraMessageHandlerCollection();
-            formatters = new List<ILiaraFormatter>();
+            formatters = new LiaraFormatterCollection();
+            Items = new LiaraHashTable<object>(isCaseSensitive: true);
         }
 
         public ILiaraServicesContainer Services
@@ -66,7 +69,7 @@ namespace Liara
         public bool UseBufferedRequest { get; set; }
         public bool UseBufferedResponse { get; set; }
 
-        public IList<ILiaraFormatter> Formatters
+        public LiaraFormatterCollection Formatters
         {
             get { return formatters; }
             set
@@ -146,16 +149,28 @@ namespace Liara
             }
         }
 
+        public ILiaraHashTable<object> Items { get; set; }
+
+        public string RootDirectory
+        {
+            get
+            {
+                return rootDirectory ?? (rootDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
+            }
+            set { rootDirectory = value; }
+        }
+
+
         public void Build()
         {
             try
             {
+                if (!isInitialized)
+                {
+                    Initialize();
+                }
                 if (!isBuildComplete)
                 {
-                    if (!isServicesContainerWired)
-                        WireServicesContainer();
-                    if (!serviceDiscoveryComplete)
-                        DiscoverServices();
                     if (!isLogWriterWired)
                         WireLogWriter();
                     if (!isTraceWriterWired)
@@ -178,6 +193,7 @@ namespace Liara
                     LogConfiguration();
                 }
 
+
                 if (Handlers.Last().InnerHandler == null)
                 {
                     Handlers.Add(new TaskCompletionHandler());
@@ -188,43 +204,6 @@ namespace Liara
             catch (Exception ex)
             {
                 Global.FrameworkLogger.WriteException(ex, true);
-            }
-        }
-
-        private void LogConfiguration()
-        {
-            if (Global.FrameworkLogger.IsEnabled)
-            {
-                foreach (var prop in typeof(ILiaraConfiguration).GetProperties())
-                {
-                    try
-                    {
-                        if (prop.Name == "Routes") continue;
-
-                        var value = prop.GetValue(this);
-                        var type = value.GetType();
-                        if (type == typeof (LiaraMessageHandlerCollection))
-                        {
-                            var values = (from handler in this.Handlers select handler.GetType().Name).ToList();
-                            Global.FrameworkLogger.WriteTo("Configuration", "\r\n{0}\r\n{1}", prop.Name + "\r\n" + new string('-', prop.Name.Length),
-                                "\r\n" + String.Join("\r\n", values) + "\r\n");
-
-                        }
-                        else if (type.IsGenericType && type.GetGenericTypeDefinition().Name == "List`1")
-                        {
-                            var valueList = (IList) value;
-                            var values = (from object item in valueList select item.GetType().Name).ToList();
-
-                            Global.FrameworkLogger.WriteTo("Configuration", "\r\n{0}\r\n{1}", prop.Name + "\r\n" + new string('-', prop.Name.Length),
-                                "\r\n" + String.Join("\r\n", values) + "\r\n");
-                        }
-                        else
-                        {
-                            Global.FrameworkLogger.WriteTo("Configuration", "{0,-22} : {1}", prop.Name, value);
-                        }
-                    }
-                    catch { }
-                }
             }
         }
 
@@ -244,19 +223,23 @@ namespace Liara
 
         public virtual void WireDefaultHandlers()
         {
+            // Insert pre-handlers in the reverse order. 
             Handlers.Insert(0, new RequestFormatHandler());
             Handlers.Insert(0, new RouteResolutionHandler());
             Handlers.Insert(0, new HttpStatusHandler());
             Handlers.Insert(0, new ResponseFormatHandler());
-            if (UseBufferedResponse || UseBufferedRequest)
-                Handlers.Insert(0, new BufferedStreamHandler());
 #if DEBUG
             Handlers.Insert(0, new TraceHandler());
 #endif
-
             Handlers.Insert(0, new ErrorHandler());
+
+            // Buffered stream handler has to be after error handling so that buffered streams can be copied back.
+            if (UseBufferedResponse || UseBufferedRequest)
+                Handlers.Insert(0, new BufferedStreamHandler());
+
             Handlers.Insert(0, new LiaraThrottleHandler());
 
+            // Add the final handlers after the user handlers.
             Handlers.Add(new RouteInvocationHandler());
             isDefaultHandlerListWired = true;
         }
@@ -322,7 +305,59 @@ namespace Liara
             serviceDiscoveryComplete = true;
         }
 
-        private void WireFrameworkLogger()
+        public void Initialize()
+        {
+            if (!isInitialized)
+            {
+                if (!isServicesContainerWired)
+                    WireServicesContainer();
+                if (!serviceDiscoveryComplete)
+                    DiscoverServices();
+            }
+            isInitialized = true;
+        }
+
+        public void LogConfiguration()
+        {
+            if (Global.FrameworkLogger.IsEnabled)
+            {
+                foreach (var prop in typeof (ILiaraConfiguration).GetProperties())
+                {
+                    try
+                    {
+                        if (prop.Name == "Routes") continue;
+
+                        var value = prop.GetValue(this);
+                        var type = value.GetType();
+                        if (type == typeof (LiaraMessageHandlerCollection))
+                        {
+                            var values = (from handler in Handlers select handler.GetType().Name).ToList();
+                            Global.FrameworkLogger.WriteTo("Configuration", "\r\n{0}\r\n{1}",
+                                prop.Name + "\r\n" + new string('-', prop.Name.Length),
+                                "\r\n" + String.Join("\r\n", values) + "\r\n");
+                        }
+                        else if (type.IsGenericType && type.GetGenericTypeDefinition().Name == "List`1")
+                        {
+                            var valueList = (IList) value;
+                            var values = (from object item in valueList select item.GetType().Name).ToList();
+
+                            Global.FrameworkLogger.WriteTo("Configuration", "\r\n{0}\r\n{1}",
+                                prop.Name + "\r\n" + new string('-', prop.Name.Length),
+                                "\r\n" + String.Join("\r\n", values) + "\r\n");
+                        }
+                        else
+                        {
+                            Global.FrameworkLogger.WriteTo("Configuration", "{0,-22} : {1}", prop.Name, value);
+                        }
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
+        }
+
+        public virtual void WireFrameworkLogger()
         {
             if (traceWriter != null)
             {
@@ -334,7 +369,7 @@ namespace Liara
             isFrameworkLoggerWired = true;
         }
 
-        private void WireTraceWriter()
+        public virtual void WireTraceWriter()
         {
             if (traceWriter == null)
             {

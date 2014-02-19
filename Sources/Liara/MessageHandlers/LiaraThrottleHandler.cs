@@ -3,7 +3,7 @@
 // Copyright (c) Launchark Technologies. All rights reserved.
 // See License.txt in the project root for license information.
 // 
-// Created: 12:09 AM 16-02-2014
+// Created: 12:49 PM 16-02-2014
 
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,33 +12,32 @@ namespace Liara.MessageHandlers
 {
     public class LiaraThrottleHandler : LiaraMessageHandler
     {
-        public static int MaxConcurrentRequests = 1000;
+        private readonly object syncRoot = new object();
+        public int MaxConcurrentRequests = 1000;
+        private int requestsInProgress;
 
-        private static readonly object SyncRoot = new object();
-        private static int _requestsInProgress;
-
-        public static int RequestsInProgress
+        public int RequestsInProgress
         {
-            get { return _requestsInProgress; }
+            get { return requestsInProgress; }
         }
 
         public override Task ProcessAsync(ILiaraContext context)
         {
-            lock (SyncRoot)
+            lock (syncRoot)
             {
-                while (_requestsInProgress >= MaxConcurrentRequests)
+                while (requestsInProgress >= MaxConcurrentRequests)
                 {
-                    context.Log.Write("Max. concurrency level reached.");
-                    context.Log.Write("Active Requests: " + _requestsInProgress);
-                    Monitor.Wait(SyncRoot);
+                    context.Log.WriteAsync("Max. concurrency level reached.");
+                    context.Log.WriteAsync("Active Requests: " + requestsInProgress);
+                    Monitor.Wait(syncRoot);
                 }
-                Interlocked.Increment(ref _requestsInProgress);
+                Interlocked.Increment(ref requestsInProgress);
             }
             var res = base.ProcessAsync(context);
-            lock (SyncRoot)
+            lock (syncRoot)
             {
-                Interlocked.Decrement(ref _requestsInProgress);
-                Monitor.Pulse(SyncRoot);
+                Interlocked.Decrement(ref requestsInProgress);
+                Monitor.Pulse(syncRoot);
             }
             return res;
         }

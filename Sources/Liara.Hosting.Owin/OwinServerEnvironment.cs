@@ -61,7 +61,7 @@ namespace Liara.Hosting.Owin
             set { Items.Set(Constants.OwinConstants.RequestMethod, value); }
         }
 
-        public ILiaraHashTable RequestHeaders
+        public ILiaraHashTable<string> RequestHeaders
         {
             get { return cache.RequestHeaders; }
             set { cache.RequestHeaders = value; }
@@ -91,7 +91,7 @@ namespace Liara.Hosting.Owin
             set { Items.Set(Constants.OwinConstants.ResponseProtocol, value); }
         }
 
-        public ILiaraHashTable ResponseHeaders
+        public ILiaraHashTable<string> ResponseHeaders
         {
             get { return cache.ResponseHeaders; }
             set { cache.ResponseHeaders = value; }

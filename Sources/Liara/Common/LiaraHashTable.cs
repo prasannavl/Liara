@@ -3,33 +3,34 @@
 // Copyright (c) Launchark Technologies. All rights reserved.
 // See License.txt in the project root for license information.
 // 
-// Created: 8:31 AM 15-02-2014
+// Created: 12:49 PM 16-02-2014
 
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Linq;
 
 namespace Liara.Common
 {
-    public class LiaraHashTable : DynamicObject, ILiaraHashTable
+    public class LiaraHashTable<T> : DynamicObject, ILiaraHashTable<T>
     {
-        protected IDictionary<string, string[]> store;
+        protected IDictionary<string, T[]> store;
 
         public LiaraHashTable(bool isCaseSensitive = true)
         {
             store =
-                new Dictionary<string, string[]>(isCaseSensitive
+                new Dictionary<string, T[]>(isCaseSensitive
                     ? StringComparer.Ordinal
                     : StringComparer.OrdinalIgnoreCase);
         }
 
-        public LiaraHashTable(IDictionary<string, string[]> existingCollection)
+        public LiaraHashTable(IDictionary<string, T[]> existingCollection)
         {
             store = existingCollection;
         }
 
 
-        public void Add(string key, string[] value)
+        public void Add(string key, T[] value)
         {
             store.Add(key, value);
         }
@@ -49,23 +50,23 @@ namespace Liara.Common
             return store.Remove(key);
         }
 
-        public bool TryGetValue(string key, out string[] value)
+        public bool TryGetValue(string key, out T[] value)
         {
             return store.TryGetValue(key, out value);
         }
 
-        public ICollection<string[]> Values
+        public ICollection<T[]> Values
         {
             get { return store.Values; }
         }
 
-        public string[] this[string key]
+        public T[] this[string key]
         {
             get { return store[key]; }
             set { store[key] = value; }
         }
 
-        public void Add(KeyValuePair<string, string[]> item)
+        public void Add(KeyValuePair<string, T[]> item)
         {
             store.Add(item);
         }
@@ -75,12 +76,12 @@ namespace Liara.Common
             store.Clear();
         }
 
-        public bool Contains(KeyValuePair<string, string[]> item)
+        public bool Contains(KeyValuePair<string, T[]> item)
         {
             return store.Contains(item);
         }
 
-        public void CopyTo(KeyValuePair<string, string[]>[] array, int arrayIndex)
+        public void CopyTo(KeyValuePair<string, T[]>[] array, int arrayIndex)
         {
             store.CopyTo(array, arrayIndex);
         }
@@ -95,12 +96,12 @@ namespace Liara.Common
             get { return store.IsReadOnly; }
         }
 
-        public bool Remove(KeyValuePair<string, string[]> item)
+        public bool Remove(KeyValuePair<string, T[]> item)
         {
             return store.Remove(item);
         }
 
-        public IEnumerator<KeyValuePair<string, string[]>> GetEnumerator()
+        public IEnumerator<KeyValuePair<string, T[]>> GetEnumerator()
         {
             return store.GetEnumerator();
         }
@@ -110,23 +111,23 @@ namespace Liara.Common
             return GetEnumerator();
         }
 
-        public string Get(string key)
+        public T Get(string key)
         {
-            string[] values;
-            return TryGetValue(key, out values) ? String.Join(",", values) : null;
+            T[] values;
+            return TryGetValue(key, out values) ? values.First() : default(T);
         }
 
-        public string[] GetValues(string key)
+        public T[] GetValues(string key)
         {
-            string[] values;
+            T[] values;
             return TryGetValue(key, out values) ? values : null;
         }
 
-        public void Set(string key, string value)
+        public void Set(string key, T value)
         {
             if (value == null)
             {
-                this[key] = new string[] {};
+                this[key] = new T[] {};
             }
             else
             {
@@ -134,11 +135,11 @@ namespace Liara.Common
             }
         }
 
-        public void SetValues(string key, string[] values)
+        public void SetValues(string key, T[] values)
         {
             if (values == null)
             {
-                this[key] = new string[] {};
+                this[key] = new T[] {};
             }
             else
             {
@@ -146,7 +147,7 @@ namespace Liara.Common
             }
         }
 
-        public void AppendValue(string key, string value, bool createIfKeyIsNotPresent = true)
+        public void AppendValue(string key, T value, bool createIfKeyIsNotPresent = true)
         {
             var existing = GetValues(key);
             if (existing == null)
@@ -164,7 +165,7 @@ namespace Liara.Common
             }
         }
 
-        public void AppendValues(string key, string[] values, bool createIfKeyIsNotPresent = true)
+        public void AppendValues(string key, T[] values, bool createIfKeyIsNotPresent = true)
         {
             var existing = GetValues(key);
             if (existing == null)
@@ -182,6 +183,38 @@ namespace Liara.Common
                 {
                     existing[len + i] = values[i];
                 }
+            }
+        }
+
+        public void RemoveValue(string key, T value, bool deleteKeyIfLastElement = true)
+        {
+            var existing = GetValues(key);
+            if (existing != null)
+            {
+                if (value != null)
+                {
+                    existing = existing.Where(val => !val.Equals(value)).ToArray();
+                    store[key] = existing;
+                }
+
+                if (deleteKeyIfLastElement && existing.Count() == 0)
+                    store.Remove(key);
+            }
+        }
+
+        public void RemoveValues(string key, T[] values, bool deleteKeyIfLastElement = true)
+        {
+            var existing = GetValues(key);
+            if (existing != null)
+            {
+                if (values != null && values.Count() > 0)
+                {
+                    existing = existing.Where(val => !values.Contains(val)).ToArray();
+                    store[key] = existing;
+                }
+
+                if (deleteKeyIfLastElement && existing.Count() == 0)
+                    store.Remove(key);
             }
         }
 
@@ -208,7 +241,7 @@ namespace Liara.Common
         /// </param>
         public override bool TrySetMember(SetMemberBinder binder, object value)
         {
-            Set(binder.Name, value.ToString());
+            Set(binder.Name, (T) value);
             return true;
         }
 
@@ -234,7 +267,7 @@ namespace Liara.Common
         /// </param>
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
-            string[] typeBuffer;
+            T[] typeBuffer;
             var hasValue = TryGetValue(binder.Name, out typeBuffer);
             if (hasValue)
             {

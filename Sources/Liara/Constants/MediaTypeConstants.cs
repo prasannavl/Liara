@@ -17,5 +17,7 @@ namespace Liara.Constants
         public static string ApplicationOctetStream = "application/octet-stream";
         public static string ApplicationJson = "application/json";
         public static string TextJson = "text/json";
+        public static string TextHtml = "text/html";
+        public static string ApplicationXhtmlXml = "application/xhtml+xml";
     }
 }

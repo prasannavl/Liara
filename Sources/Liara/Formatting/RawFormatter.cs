@@ -8,12 +8,14 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Liara.Common;
+using Liara.Constants;
 
 namespace Liara.Formatting
 {
     public class RawFormatter : ILiaraFormatter
     {
-        private int priority = -2;
+        private int priority = LiaraServiceConstants.PriorityLowest;
 
         public int Priority
         {
@@ -34,6 +36,11 @@ namespace Liara.Formatting
         public bool CanWrite(Type inputObjectType, ILiaraContext context)
         {
             return true;
+        }
+
+        public MediaType GetDefaultMediaType()
+        {
+            return null;
         }
 
         public void PrepareWrite(ILiaraContext context)

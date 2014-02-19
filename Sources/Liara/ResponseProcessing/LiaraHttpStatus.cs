@@ -3,7 +3,7 @@
 // Copyright (c) Launchark Technologies. All rights reserved.
 // See License.txt in the project root for license information.
 // 
-// Created: 8:31 AM 15-02-2014
+// Created: 12:49 PM 16-02-2014
 
 using System;
 using System.Collections.Generic;
@@ -17,13 +17,18 @@ namespace Liara
     public sealed partial class LiaraHttpStatus
     {
         private static readonly Dictionary<int, LiaraHttpStatus> Instance = new Dictionary<int, LiaraHttpStatus>();
-        public readonly HttpStatusCategory Category;
+        public readonly HttpStatusCategory Category = HttpStatusCategory.Uncategorized;
 
         public readonly int Code;
         public readonly string Description;
 
-        public LiaraHttpStatus(int code, string description,
-            HttpStatusCategory category = HttpStatusCategory.Uncategorized)
+        public LiaraHttpStatus(int code, string description)
+        {
+            Code = code;
+            Description = description;
+        }
+
+        internal LiaraHttpStatus(int code, string description, HttpStatusCategory category)
         {
             Code = code;
             Description = description;

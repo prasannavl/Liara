@@ -102,5 +102,10 @@ namespace Liara.Common
         {
             return Group + "/" + Type;
         }
+
+        public static MediaType FromDerivedMediaType(MediaType other)
+        {
+            return new MediaType {group = other.group, type = other.type};
+        }
     }
 }

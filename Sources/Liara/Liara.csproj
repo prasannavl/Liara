@@ -41,6 +41,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Newtonsoft.Json.6.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="RazorEngine">
+      <HintPath>..\..\packages\RazorEngine.3.4.1\lib\net45\RazorEngine.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Reactive.Core, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -59,6 +62,11 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Rx-PlatformServices.2.2.3\lib\net45\System.Reactive.PlatformServices.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Microsoft.AspNet.Razor.3.0.0\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -69,18 +77,28 @@
     <Compile Include="Common\DynamicDictionary.cs" />
     <Compile Include="Common\DynamicDictionaryValue.cs" />
     <Compile Include="Common\ErrorMessage.cs" />
+    <Compile Include="Common\ILiaraPrioritizedService.cs" />
+    <Compile Include="Common\LiaraHashTable.cs" />
     <Compile Include="Common\LiaraHeaderEntry.cs" />
+    <Compile Include="Constants\LiaraServiceConstants.cs" />
+    <Compile Include="Extensions\LiaraTypeExtensions.cs" />
+    <Compile Include="Formatting\LiaraFormatterCollection.cs" />
+    <Compile Include="Formatting\ILiaraViewTemplate.cs" />
+    <Compile Include="Formatting\LiaraViewProvider.cs" />
+    <Compile Include="Formatting\LiaraViewTemplate.cs" />
+    <Compile Include="Formatting\ILiaraViewProvider.cs" />
+    <Compile Include="Formatting\LiaraViewFormatter.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="ILiaraConfiguration.cs" />
     <Compile Include="MessageHandlers\LiaraThrottleHandler.cs" />
     <Compile Include="MessageHandlers\TraceHandler.cs" />
-    <Compile Include="ResponseProcessing\EmptyResponsePreparer.cs" />
+    <Compile Include="ResponseProcessing\EmptyResponseSynchronizer.cs" />
     <Compile Include="ResponseProcessing\ILiaraResponseSynchronizer.cs" />
     <Compile Include="ILiaraServerEnvironment.cs" />
     <Compile Include="Common\ILiaraHashTable.cs" />
     <Compile Include="Common\LiaraCookie.cs" />
     <Compile Include="Common\LiaraExplorer.cs" />
-    <Compile Include="Common\LiaraHashTable.cs" />
+    <Compile Include="Common\LiaraStringHashTable.cs" />
     <Compile Include="Common\LiaraQValuedItem.cs" />
     <Compile Include="Common\LiaraStream.cs" />
     <Compile Include="Common\LiaraStatusHandler.cs" />
@@ -91,7 +109,7 @@
     <Compile Include="Services\ILiaraServicesContainer.cs" />
     <Compile Include="Formatting\JsonFormatter.cs" />
     <Compile Include="Formatting\LiaraFormatSelector.cs" />
-    <Compile Include="Formatting\LiaraMediaTypeBasedFormatter.cs" />
+    <Compile Include="Formatting\LiaraFormatter.cs" />
     <Compile Include="Formatting\RazorFormatter.cs" />
     <Compile Include="Formatting\RawFormatter.cs" />
     <Compile Include="Formatting\ILiaraFormatSelector.cs" />
@@ -169,13 +187,20 @@
     <Compile Include="Common\ILiaraStatusHandler.cs" />
     <Compile Include="Services\DefaultServicesContainer.cs" />
     <Compile Include="Services\ILiaraServiceDiscovery.cs" />
-    <Compile Include="Services\LiaraServiceLifeTime.cs" />
     <Compile Include="Services\DefaultServiceDiscovery.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Formatting\Views\500.html" />
+    <EmbeddedResource Include="Formatting\Views\40x.html" />
+    <EmbeddedResource Include="Formatting\Views\Error.html" />
+    <EmbeddedResource Include="Formatting\Views\50x.html" />
+    <EmbeddedResource Include="Formatting\Views\400.html" />
+    <EmbeddedResource Include="Formatting\Views\Error.cshtml" />
+    <EmbeddedResource Include="Formatting\Views\555.html" />
     <Content Include="ResponseProcessing\HttpStatusCodes.txt" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Formatting\Views\404.html" />
     <None Include="packages.config" />
     <None Include="RequestProcessing\LiaraRequestHeaderCollection.Generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>

@@ -3,7 +3,7 @@
 // Copyright (c) Launchark Technologies. All rights reserved.
 // See License.txt in the project root for license information.
 // 
-// Created: 8:31 AM 15-02-2014
+// Created: 12:49 PM 16-02-2014
 
 using System;
 using System.Threading.Tasks;
@@ -19,21 +19,27 @@ namespace Liara.MessageHandlers
     {
         public override async Task ProcessAsync(ILiaraContext context)
         {
-            await context.Route.Handlers.Execute(context);
-
-            if (context.Route.ActionReturnType == LiaraActionReturnType.Void)
+            try
             {
-                ((Action<ILiaraContext>) context.Route.Action)(context);
+                switch (context.Route.ActionReturnType)
+                {
+                    case LiaraActionReturnType.Void:
+                        ((Action<ILiaraContext>) context.Route.Action)(context);
+                        break;
+                    case LiaraActionReturnType.Generic:
+                        context.Response.Content =
+                            ((Func<ILiaraContext, object>) context.Route.Action)(context);
+                        break;
+                    case LiaraActionReturnType.Task:
+                        context.Response.Content =
+                            await ((Func<ILiaraContext, Task<object>>) context.Route.Action)(context);
+                        break;
+                }
             }
-            else if (context.Route.ActionReturnType == LiaraActionReturnType.Generic)
+            catch (Exception ex)
             {
-                context.Response.Content =
-                    ((Func<ILiaraContext, object>) context.Route.Action)(context);
-            }
-            else
-            {
-                context.Response.Content =
-                    await ((Func<ILiaraContext, Task<object>>) context.Route.Action)(context);
+                context.Response.Status = LiaraHttpStatus.InternalServerError;
+                context.Response.Content = ex;
             }
         }
     }

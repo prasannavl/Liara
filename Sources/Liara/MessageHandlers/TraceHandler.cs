@@ -45,11 +45,11 @@ namespace Liara.MessageHandlers
             {
                 sb.Append(prop.Name + " : ");
                 var value = prop.GetValue(context.Environment);
-                if (value != null && value.GetType() == typeof (LiaraHashTable))
+                if (value != null && value.GetType() == typeof (LiaraStringHashTable))
                 {
                     sb.AppendLine();
                     sb.AppendLine();
-                    var hashTable = (LiaraHashTable) value;
+                    var hashTable = (LiaraStringHashTable) value;
                     foreach (var items in hashTable)
                     {
                         sb.AppendLine(items.Key + " : " + hashTable.Get(items.Key));
@@ -67,7 +67,7 @@ namespace Liara.MessageHandlers
             }
             sb.AppendLine();
             sb.AppendLine(separator);
-            context.Trace.WriteTo("Request Tracing", sb.ToString());
+            context.Trace.WriteToAsync("Request Tracing", sb.ToString());
         }
     }
 }

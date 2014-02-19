@@ -22,8 +22,8 @@ namespace Liara.MessageHandlers
                     context.Request.Content = await context.Request.Format.ProcessAsync(
                         context.Route.RequestDtoType ?? typeof (object),
                         stream);
-                    if (context.Response.Status == LiaraHttpStatus.BadRequest ||
-                        context.Response.Status == LiaraHttpStatus.NotAcceptable)
+                    if (context.Response.Status.Code == LiaraHttpStatus.BadRequest.Code ||
+                        context.Response.Status.Code == LiaraHttpStatus.NotAcceptable.Code)
                     {
                         return;
                     }

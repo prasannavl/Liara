@@ -3,7 +3,7 @@
 // Copyright (c) Launchark Technologies. All rights reserved.
 // See License.txt in the project root for license information.
 // 
-// Created: 8:31 AM 15-02-2014
+// Created: 12:49 PM 16-02-2014
 
 using System;
 using System.Diagnostics;
@@ -13,6 +13,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Liara.Constants;
 
 namespace Liara.Logging
 {
@@ -22,6 +23,7 @@ namespace Liara.Logging
 
         private static readonly IndentedConsoleWriter ConsoleWriter = new IndentedConsoleWriter();
         private static readonly object ConsoleLockObj = new object();
+        private int priority = LiaraServiceConstants.OrderDefault;
 
         public ConsoleLogWriter()
         {
@@ -29,7 +31,12 @@ namespace Liara.Logging
             SetupListener();
         }
 
-        public int Priority { get; set; }
+        public int Priority
+        {
+            get { return priority; }
+            set { priority = value; }
+        }
+
         public bool IsEnabled { get; set; }
 
         /// <summary>
@@ -227,9 +234,10 @@ namespace Liara.Logging
 
         private void WriteCurrentDateTime()
         {
+            var color = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.White;
             Console.Write(DateTime.Now.ToString("s"));
-            Console.ResetColor();
+            Console.ForegroundColor = color;
         }
 
         private void WriteExceptionHandler(string logName, Exception exception)

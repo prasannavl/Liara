@@ -3,11 +3,12 @@
 // Copyright (c) Launchark Technologies. All rights reserved.
 // See License.txt in the project root for license information.
 // 
-// Created: 8:31 AM 15-02-2014
+// Created: 12:49 PM 16-02-2014
 
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using Liara.Constants;
 using LightInject;
 
 namespace Liara.Services
@@ -16,6 +17,7 @@ namespace Liara.Services
     {
         private readonly ConcurrentStack<Scope> scopes = new ConcurrentStack<Scope>();
         private readonly IServiceContainer serviceContainer;
+        private int priority = LiaraServiceConstants.PriorityLowest;
 
         public DefaultServicesContainer()
         {
@@ -45,17 +47,17 @@ namespace Liara.Services
 
         public void Register(Type serviceType, Type implementingType, string serviceName, LiaraServiceLifeTime lifeTime)
         {
-            if (lifeTime == LiaraServiceLifeTime.Singleton)
+            switch (lifeTime)
             {
-                serviceContainer.Register(serviceType, implementingType, serviceName, new PerContainerLifetime());
-            }
-            else if (lifeTime == LiaraServiceLifeTime.Transient)
-            {
-                serviceContainer.Register(serviceType, implementingType, serviceName);
-            }
-            else if (lifeTime == LiaraServiceLifeTime.PerRequest)
-            {
-                serviceContainer.Register(serviceType, implementingType, serviceName, new PerScopeLifetime());
+                case LiaraServiceLifeTime.Singleton:
+                    serviceContainer.Register(serviceType, implementingType, serviceName, new PerContainerLifetime());
+                    break;
+                case LiaraServiceLifeTime.Transient:
+                    serviceContainer.Register(serviceType, implementingType, serviceName);
+                    break;
+                case LiaraServiceLifeTime.Scope:
+                    serviceContainer.Register(serviceType, implementingType, serviceName, new PerScopeLifetime());
+                    break;
             }
         }
 
@@ -65,7 +67,7 @@ namespace Liara.Services
             return this;
         }
 
-        public object GetContainer()
+        public object GetRootContainer()
         {
             return serviceContainer;
         }
@@ -98,6 +100,17 @@ namespace Liara.Services
         public IEnumerable<T> GetAll<T>()
         {
             return serviceContainer.GetAllInstances<T>();
+        }
+
+        public int Priority
+        {
+            get { return priority; }
+            set { priority = value; }
+        }
+
+        public void UnRegister(Type serviceType, object instance, string serviceName)
+        {
+            throw new NotImplementedException();
         }
     }
 }

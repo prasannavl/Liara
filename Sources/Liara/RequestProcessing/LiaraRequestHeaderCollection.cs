@@ -9,7 +9,7 @@ using Liara.Common;
 
 namespace Liara.RequestProcessing
 {
-    public partial class LiaraRequestHeaderCollection : LiaraHashTable
+    public partial class LiaraRequestHeaderCollection : LiaraStringHashTable
     {
         public LiaraRequestHeaderCollection() : base(false)
         {
