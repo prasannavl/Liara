@@ -15,14 +15,14 @@ namespace Liara.MessageHandlers
         {
             await base.ProcessAsync(context);
 
+            // Use the response synchronization before writing to the stream.
+            // Note: Make sure response synchronize is called at the end, in a case where this message handler is removed
+            // from the chain, or replaced.
+
+            context.Response.Synchronize();
+
             if (context.Response.Content != null && context.Response.Format.Formatter != null)
             {
-                // Use the response synchronization before writing to the stream.
-                // Note: Make sure response synchronize is called at the end, in a case where this message handler is removed
-                // from the chain, or replaced.
-
-                context.Response.Synchronize(true);
-
                 await context.Response.Format.ProcessAsync(
                     context.Response.Content,
                     context.Environment.ResponseBody);

@@ -99,7 +99,7 @@ namespace Liara.RequestProcessing
         {
             formatter =
                 context.Engine.Configuration.FormatSelector.GetRequestFormatter(
-                    context.Route.RequestDtoType ?? typeof (object), context);
+                    context.Route.RequestModel ?? typeof (object), context);
             IsSelected = true;
         }
 

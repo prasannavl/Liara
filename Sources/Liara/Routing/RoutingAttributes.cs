@@ -3,13 +3,11 @@
 // Copyright (c) Launchark Technologies. All rights reserved.
 // See License.txt in the project root for license information.
 // 
-// Created: 8:31 AM 15-02-2014
+// Created: 12:49 PM 16-02-2014
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Liara.Common;
-using Liara.Constants;
 
 namespace Liara
 {
@@ -97,19 +95,18 @@ namespace Liara
     }
 
     /// <summary>
-    ///     Route conditon.
-    ///     <para>Route will be matched only if the conditon predicate is satisfied.</para>
+    ///     Route's request model.
+    ///     <para>When specified, Request.Content is directly deserialized into the given type.</para>
+    ///     <para>Note: Cast the dynamic variable back to the model's type to access it statically.</para>
     /// </summary>
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-    public class RouteConditionAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+    public class RequestModelAttribute : Attribute
     {
-        public RouteConditionAttribute(string routeCondition, string routeName = null)
+        public RequestModelAttribute(Type requestModeltype)
         {
-            RouteName = routeName;
-            RouteCondition = routeCondition;
+            RequestModel = requestModeltype;
         }
 
-        public string RouteName { get; set; }
-        public string RouteCondition { get; set; }
+        public Type RequestModel { get; set; }
     }
 }

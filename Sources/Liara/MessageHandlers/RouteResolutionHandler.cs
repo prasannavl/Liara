@@ -8,6 +8,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Liara.Routing;
+using RazorEngine.Templating;
 
 namespace Liara.MessageHandlers
 {

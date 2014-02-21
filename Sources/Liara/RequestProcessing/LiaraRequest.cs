@@ -3,7 +3,7 @@
 // Copyright (c) Launchark Technologies. All rights reserved.
 // See License.txt in the project root for license information.
 // 
-// Created: 8:31 AM 15-02-2014
+// Created: 12:49 PM 16-02-2014
 
 namespace Liara.RequestProcessing
 {
@@ -12,6 +12,7 @@ namespace Liara.RequestProcessing
         private readonly ILiaraContext context;
         private LiaraRequestCookieCollection cookies;
         private LiaraQueryString queryString;
+        private LiaraRequestParameters reqParams;
 
         public LiaraRequest(ILiaraContext context)
         {
@@ -44,7 +45,7 @@ namespace Liara.RequestProcessing
 
         public LiaraRequestParameters Parameters
         {
-            get { return new LiaraRequestParameters(); }
+            get { return reqParams ?? (reqParams = new LiaraRequestParameters(context)); }
         }
 
         public dynamic Content { get; set; }

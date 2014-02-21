@@ -23,7 +23,7 @@ namespace Liara.Routing
         }
 
         public string Path { get; set; }
-        public Type RequestDtoType { get; set; }
+        public Type RequestModel { get; set; }
         public IList<string> RequestMethods { get; set; }
         public MethodInfo ActionMethodInfo { get; set; }
         public LiaraMessageHandlerCollection Handlers { get; set; }

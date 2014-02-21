@@ -7,7 +7,6 @@
 
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using Liara.MessageHandlers;
 using Microsoft.Owin.Hosting;
@@ -119,17 +118,68 @@ namespace Liara.Demos.Routing
             return "\r\nJust saying hi..";
         }
 
-        [Route("/json"), RouteMethod("POST, GET")]
-        public object Json()
+        [Route("/post"), RouteMethod("POST")]
+        public object Post1()
         {
-            var c = Context.Request.Content;
+            var c = Request.Content;
+
             try
             {
-                return new {c.Name, c.Message};
+                return new {Name = c.Name, Message = c.Message};
             }
-            catch
+            catch (Exception ex)
             {
-                return new {Error = "No name, or message given in the input!"};
+                return new {Error = "No name, or message given in the input!", Detail = ex.Message};
+            }
+        }
+
+        [Route("/postparams"), RouteMethod("POST")]
+        public object Post2()
+        {
+            try
+            {
+                return new { Name = Request.Parameters["Name"], Message = Request.Parameters["Message"] };
+            }
+            catch (Exception ex)
+            {
+                return new { Error = "No name, or message given in the input!", Detail = ex.Message };
+            }
+        }
+
+        class PostDto
+        {
+            public string Name { get; set; }
+            public  string Message { get; set; }
+        }
+
+        [RequestModel(typeof(PostDto))]
+        [Route("/postdto"), RouteMethod("POST")]
+        public object PostDtoAction()
+        {
+            PostDto c = Request.Content;
+
+            try
+            {
+                return new { Name = c.Name, Message = c.Message };
+            }
+            catch (Exception ex)
+            {
+                return new { Error = "No name, or message given in the input!", Detail = ex.Message };
+            }
+        }
+
+
+        [RequestModel(typeof(PostDto))]
+        [Route("/postdto2"), RouteMethod("POST")]
+        public object PostDto2Action()
+        {
+            try
+            {
+                return new { Name = Request.Parameters["Name"], Message = Request.Parameters["Message"] };
+            }
+            catch (Exception ex)
+            {
+                return new { Error = "No name, or message given in the input!", Detail = ex.Message };
             }
         }
     }

@@ -15,7 +15,6 @@ namespace Liara.Common
     public class LiaraHashTable<T> : DynamicObject, ILiaraHashTable<T>
     {
         protected IDictionary<string, T[]> store;
-
         public LiaraHashTable(bool isCaseSensitive = true)
         {
             store =
@@ -111,19 +110,19 @@ namespace Liara.Common
             return GetEnumerator();
         }
 
-        public T Get(string key)
+        public virtual T Get(string key)
         {
             T[] values;
             return TryGetValue(key, out values) ? values.First() : default(T);
         }
 
-        public T[] GetValues(string key)
+        public virtual T[] GetValues(string key)
         {
             T[] values;
             return TryGetValue(key, out values) ? values : null;
         }
 
-        public void Set(string key, T value)
+        public virtual void Set(string key, T value)
         {
             if (value == null)
             {
@@ -135,7 +134,7 @@ namespace Liara.Common
             }
         }
 
-        public void SetValues(string key, T[] values)
+        public virtual void SetValues(string key, T[] values)
         {
             if (values == null)
             {
@@ -147,7 +146,7 @@ namespace Liara.Common
             }
         }
 
-        public void AppendValue(string key, T value, bool createIfKeyIsNotPresent = true)
+        public virtual void AppendValue(string key, T value, bool createIfKeyIsNotPresent = true)
         {
             var existing = GetValues(key);
             if (existing == null)
@@ -165,7 +164,7 @@ namespace Liara.Common
             }
         }
 
-        public void AppendValues(string key, T[] values, bool createIfKeyIsNotPresent = true)
+        public virtual void AppendValues(string key, T[] values, bool createIfKeyIsNotPresent = true)
         {
             var existing = GetValues(key);
             if (existing == null)
@@ -186,7 +185,7 @@ namespace Liara.Common
             }
         }
 
-        public void RemoveValue(string key, T value, bool deleteKeyIfLastElement = true)
+        public virtual void RemoveValue(string key, T value, bool deleteKeyIfLastElement = true)
         {
             var existing = GetValues(key);
             if (existing != null)
@@ -202,7 +201,7 @@ namespace Liara.Common
             }
         }
 
-        public void RemoveValues(string key, T[] values, bool deleteKeyIfLastElement = true)
+        public virtual void RemoveValues(string key, T[] values, bool deleteKeyIfLastElement = true)
         {
             var existing = GetValues(key);
             if (existing != null)
@@ -217,6 +216,7 @@ namespace Liara.Common
                     store.Remove(key);
             }
         }
+
 
         /// <summary>
         ///     Provides the implementation for operations that set member values. Classes derived from the

@@ -128,6 +128,8 @@ namespace Liara.ResponseProcessing
                 throw new InvalidOperationException("No response formatter available.");
 
             IsProcessed = true;
+
+            Formatter.PrepareWrite(context);
             return Formatter.WriteAsync(inputObject, targetStream, context);
         }
 

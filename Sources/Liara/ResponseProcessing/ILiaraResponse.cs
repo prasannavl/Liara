@@ -17,7 +17,7 @@ namespace Liara.ResponseProcessing
         LiaraResponseCookieCollection Cookies { get; }
         object Content { get; set; }
         LiaraResponseFormatProvider Format { get; set; }
-        void Synchronize(bool force = false);
+        void Synchronize();
 
         /// <summary>
         ///     Writes the given text to the response body stream using UTF-8.

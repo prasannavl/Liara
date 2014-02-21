@@ -52,18 +52,12 @@ namespace Liara.ResponseProcessing
 
         public LiaraResponseFormatProvider Format { get; set; }
 
-        public void Synchronize(bool force = false)
+        public void Synchronize()
         {
-            if (!isSynced || force)
-            {
-                context.Engine.Configuration.ResponseSynchronizer.Synchronize(context);
-                if (Format.Formatter != null)
-                {
-                    Format.Formatter.PrepareWrite(context);
-                }
-                isSynced = true;
-            }
+            context.Engine.Configuration.ResponseSynchronizer.Synchronize(context);
+            isSynced = true;
         }
+
 
         /// <summary>
         ///     Writes the given text to the response body stream using UTF-8.

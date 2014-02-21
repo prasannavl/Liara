@@ -25,7 +25,7 @@ namespace Liara.Routing
         public string Path { get; set; }
         public MethodInfo MethodInfo { get; set; }
         public LiaraActionReturnType ActionReturnType { get; set; }
-        public Type RequestDtoType { get; set; }
+        public Type RequestModel { get; set; }
         public LiaraMessageHandlerCollection Handlers { get; set; }
         public object Action { get; set; }
         public int Priority { get; set; }

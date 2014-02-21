@@ -47,6 +47,7 @@ namespace Liara.Routing
                     Priority = aggRoute.Priority,
                     MethodInfo = aggRoute.ActionMethodInfo,
                     Handlers = aggRoute.Handlers,
+                    RequestModel = aggRoute.RequestModel
                 };
 
 
@@ -129,7 +130,7 @@ namespace Liara.Routing
                         Global.FrameworkLogger.WriteTo("Routes", "{0,-8} : {1} {2} {3}",
                             item,
                             string.IsNullOrWhiteSpace(route.Path) ? "/" : route.Path,
-                            route.RequestDtoType == null ? string.Empty : " - In: " + route.RequestDtoType.Name,
+                            route.RequestModel == null ? string.Empty : " - In: " + route.RequestModel.Name,
                             route.ActionReturnType == LiaraActionReturnType.Task
                                 ? " - Out : Task - " +
                                   string.Join(",",
@@ -228,12 +229,19 @@ namespace Liara.Routing
                         RequestMethods = currentRoute.RequestMethods,
                         Priority = routePathAttr.Priority,
                         Path = StringHelpers.CombineWebPath(routePrefix, currentRoute.Path),
-                        Handlers = GetRouteHandlerCollection(method)
+                        Handlers = GetRouteHandlerCollection(method),
+                        RequestModel = GetRouteRequestModel(method)
                     };
 
                     yield return newRoute;
                 }
             }
+        }
+
+        private Type GetRouteRequestModel(MethodInfo method)
+        {
+            var reqModelAttrs = method.GetCustomAttributes(typeof (RequestModelAttribute), false);
+            return reqModelAttrs.Any() ? reqModelAttrs.Cast<RequestModelAttribute>().First().RequestModel : null;
         }
 
         public IEnumerable<string> GetRoutePrefixes(MethodInfo method)

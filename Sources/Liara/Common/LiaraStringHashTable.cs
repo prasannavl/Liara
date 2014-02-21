@@ -3,219 +3,29 @@
 // Copyright (c) Launchark Technologies. All rights reserved.
 // See License.txt in the project root for license information.
 // 
-// Created: 12:49 PM 16-02-2014
+// Created: 7:05 AM 19-02-2014
 
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
-using System.Linq;
 
 namespace Liara.Common
 {
-    public class LiaraStringHashTable : DynamicObject, ILiaraHashTable<string>
+    public class LiaraStringHashTable : LiaraHashTable<string>
     {
-        protected IDictionary<string, string[]> store;
-
-        public LiaraStringHashTable(bool isCaseSensitive = true)
+        public LiaraStringHashTable(bool isCaseSensitive = true) : base(isCaseSensitive)
         {
-            store =
-                new Dictionary<string, string[]>(isCaseSensitive
-                    ? StringComparer.Ordinal
-                    : StringComparer.OrdinalIgnoreCase);
         }
 
-        public LiaraStringHashTable(IDictionary<string, string[]> existingCollection)
+        public LiaraStringHashTable(IDictionary<string, string[]> hashTable)
+            : base(hashTable)
         {
-            store = existingCollection;
         }
 
-
-        public void Add(string key, string[] value)
-        {
-            store.Add(key, value);
-        }
-
-        public bool ContainsKey(string key)
-        {
-            return store.ContainsKey(key);
-        }
-
-        public ICollection<string> Keys
-        {
-            get { return store.Keys; }
-        }
-
-        public bool Remove(string key)
-        {
-            return store.Remove(key);
-        }
-
-        public bool TryGetValue(string key, out string[] value)
-        {
-            return store.TryGetValue(key, out value);
-        }
-
-        public ICollection<string[]> Values
-        {
-            get { return store.Values; }
-        }
-
-        public string[] this[string key]
-        {
-            get { return store[key]; }
-            set { store[key] = value; }
-        }
-
-        public void Add(KeyValuePair<string, string[]> item)
-        {
-            store.Add(item);
-        }
-
-        public void Clear()
-        {
-            store.Clear();
-        }
-
-        public bool Contains(KeyValuePair<string, string[]> item)
-        {
-            return store.Contains(item);
-        }
-
-        public void CopyTo(KeyValuePair<string, string[]>[] array, int arrayIndex)
-        {
-            store.CopyTo(array, arrayIndex);
-        }
-
-        public int Count
-        {
-            get { return store.Count; }
-        }
-
-        public bool IsReadOnly
-        {
-            get { return store.IsReadOnly; }
-        }
-
-        public bool Remove(KeyValuePair<string, string[]> item)
-        {
-            return store.Remove(item);
-        }
-
-        public IEnumerator<KeyValuePair<string, string[]>> GetEnumerator()
-        {
-            return store.GetEnumerator();
-        }
-
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        public string Get(string key)
+        public override string Get(string key)
         {
             string[] values;
             return TryGetValue(key, out values) ? String.Join(",", values) : null;
-        }
-
-        public string[] GetValues(string key)
-        {
-            string[] values;
-            return TryGetValue(key, out values) ? values : null;
-        }
-
-        public void Set(string key, string value)
-        {
-            if (value == null)
-            {
-                this[key] = new string[] {};
-            }
-            else
-            {
-                this[key] = new[] {value};
-            }
-        }
-
-        public void SetValues(string key, string[] values)
-        {
-            if (values == null)
-            {
-                this[key] = new string[] {};
-            }
-            else
-            {
-                this[key] = values;
-            }
-        }
-
-        public void AppendValue(string key, string value, bool createIfKeyIsNotPresent = true)
-        {
-            var existing = GetValues(key);
-            if (existing == null)
-            {
-                if (!createIfKeyIsNotPresent)
-                    return;
-
-                Set(key, value);
-            }
-            else if (value != null)
-            {
-                var len = existing.Length;
-                Array.Resize(ref existing, len + 1);
-                existing[len] = value;
-            }
-        }
-
-        public void AppendValues(string key, string[] values, bool createIfKeyIsNotPresent = true)
-        {
-            var existing = GetValues(key);
-            if (existing == null)
-            {
-                if (!createIfKeyIsNotPresent)
-                    return;
-
-                SetValues(key, values);
-            }
-            else if (values != null && values.Length > 0)
-            {
-                var len = existing.Length;
-                Array.Resize(ref existing, len + values.Length);
-                for (int i = 0; i < values.Length; i++)
-                {
-                    existing[len + i] = values[i];
-                }
-            }
-        }
-
-        public void RemoveValue(string key, string value, bool deleteKeyIfLastElement = true)
-        {
-            var existing = GetValues(key);
-            if (existing != null)
-            {
-                if (value != null)
-                {
-                    existing = existing.Where(val => !val.Equals(value)).ToArray();
-                    store[key] = existing;
-                }
-
-                if (deleteKeyIfLastElement && !existing.Any())
-                    store.Remove(key);
-            }
-        }
-
-        public void RemoveValues(string key, string[] values, bool deleteKeyIfLastElement = true)
-        {
-            var existing = GetValues(key);
-            if (existing != null)
-            {
-                if (values != null && values.Any())
-                {
-                    existing = existing.Where(val => !values.Contains(val)).ToArray();
-                    store[key] = existing;
-                }
-
-                if (deleteKeyIfLastElement && !existing.Any())
-                    store.Remove(key);
-            }
         }
 
         /// <summary>
