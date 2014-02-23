@@ -30,7 +30,6 @@ namespace Liara.RequestProcessing
             {
                 internalContentType = ContentDeterminationType.Unknown;
             }
-
         }
 
         private Type TypeCache
@@ -55,6 +54,9 @@ namespace Liara.RequestProcessing
         {
             get { return Get(name); }
         }
+
+        //TODO: Model State.
+        public object ModelState { get; set; }
 
         public virtual dynamic Get(string key)
         {
@@ -153,6 +155,7 @@ namespace Liara.RequestProcessing
         {
             throw new NotImplementedException();
         }
+
 
         //TODO: Model Validation
         public bool Validate()

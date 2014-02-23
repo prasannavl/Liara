@@ -7,7 +7,9 @@
 
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
+using Liara.Formatting;
 using Liara.MessageHandlers;
 using Microsoft.Owin.Hosting;
 using Owin;
@@ -45,6 +47,7 @@ namespace Liara.Demos.Routing
             //config.Handlers.Add(new HelloHandler());
 
             config.Build();
+            //config.Formatters.Remove(config.Formatters.FirstOrDefault(x => x.GetType() == typeof(RazorViewFormatter)));
             //config.Handlers.Remove(config.Handlers.FirstOrDefault(x => x.GetType() == typeof (LiaraThrottleHandler)));
 
             //var throttleHandler = new LiaraThrottleHandler {MaxConcurrentRequests = 10};

@@ -1,10 +1,11 @@
-﻿// Author: Prasanna V. Loganathar
+// Author: Prasanna V. Loganathar
 // Project: Liara
 // Copyright (c) Launchark Technologies. All rights reserved.
 // See License.txt in the project root for license information.
 // 
-// Created: 12:49 PM 16-02-2014
+// Created: 6:05 PM 21-02-2014
 
+using System.Runtime.Remoting.Contexts;
 using System.Threading.Tasks;
 using Liara.Common;
 using RazorEngine.Configuration;
@@ -73,32 +74,40 @@ namespace Liara.Formatting
                 context.Response.Status = LiaraHttpStatus.NoViewAssociated;
                 return ResolveInternalView(context);
             }
+            
             service.GetTemplate(templateString, context.Response.Content, viewName);
             return result;
         }
 
 
-        public override Task<string> RenderView(ILiaraViewTemplate viewTemplate, object model)
+        public override Task<string> RenderView(ILiaraViewTemplate viewTemplate, object model, ILiaraContext context)
         {
-            return Task.FromResult(service.Run(viewTemplate.Name, model, null));
+            var template = (ILiaraRazorTemplate)service.Resolve(viewTemplate.Name, model);
+            template.Context = context;
+            return Task.FromResult(service.Run((ITemplate)template, null));
+        }
+
+        public class RazorViewProvider : LiaraViewProvider
+        {
+            public RazorViewProvider()
+            {
+                InternalViewResourceLocationString = "Liara.Formatting.Views.{0}.cshtml";
+                ViewFileExtensions.Insert(0, ".cshtml");
+            }
+
+            public override string GetInternalView(ILiaraContext context)
+            {
+                return GetInternalViewResource("Error");
+            }
         }
     }
 
-    public class RazorViewProvider : LiaraViewProvider
+    public interface ILiaraRazorTemplate
     {
-        public RazorViewProvider()
-        {
-            InternalViewResourceLocationString = "Liara.Formatting.Views.{0}.cshtml";
-            ViewFileExtensions.Insert(0, ".cshtml");
-        }
-
-        public override string GetInternalView(ILiaraContext context)
-        {
-            return GetInternalViewResource("Error");
-        }
+        ILiaraContext Context { get; set; }
     }
 
-    public abstract class LiaraRazorTemplateBase<T> : TemplateBase<T>
+    public abstract class LiaraRazorTemplateBase<T> : TemplateBase<T>, ILiaraRazorTemplate
     {
         public ILiaraContext Context { get; set; }
     }

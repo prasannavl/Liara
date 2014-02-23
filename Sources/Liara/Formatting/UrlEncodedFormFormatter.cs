@@ -34,6 +34,7 @@ namespace Liara.Formatting
 
         public override Task<object> ReadAsync(Type readAsType, Stream inputStream, ILiaraContext context)
         {
+            // TODO: Model binding when RequestModel is explicit.
             var text = new StreamReader(inputStream).ReadToEnd();
             var collection = ParseForm(text, isCaseSensitive: true);
             return Task.FromResult((object) collection);

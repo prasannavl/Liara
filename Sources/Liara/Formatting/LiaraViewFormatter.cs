@@ -41,7 +41,7 @@ namespace Liara.Formatting
             return null;
         }
 
-        public abstract Task<string> RenderView(ILiaraViewTemplate viewTemplate, object model);
+        public abstract Task<string> RenderView(ILiaraViewTemplate viewTemplate, object model, ILiaraContext context);
 
         public virtual ILiaraViewTemplate ResolveInternalView(ILiaraContext context)
         {
@@ -88,7 +88,7 @@ namespace Liara.Formatting
                     };
                 }
             }
-            var viewOutput = await RenderView(template, inputObject);
+            var viewOutput = await RenderView(template, inputObject, context);
             var buf = context.Response.Format.CharsetEncoding.GetBytes(viewOutput);
             await targetStream.WriteAsync(buf, 0, buf.Length);
         }

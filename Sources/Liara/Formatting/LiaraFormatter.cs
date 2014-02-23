@@ -62,9 +62,10 @@ namespace Liara.Formatting
 
         public virtual void PrepareWrite(ILiaraContext context)
         {
+            var mediaType = context.Response.Format.MediaType;
             context.Response.Headers.ContentType.Value =
-                context.Response.Format.MediaType +
-                ";charset=" +
+                mediaType + (mediaType != null ? ";" : null) +
+                "charset=" +
                 context.Response.Format.CharsetEncoding.WebName;
         }
 

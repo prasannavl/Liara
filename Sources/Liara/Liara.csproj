@@ -84,6 +84,7 @@
     <Compile Include="Formatting\LiaraViewTemplate.cs" />
     <Compile Include="Formatting\ILiaraViewProvider.cs" />
     <Compile Include="Formatting\LiaraViewFormatter.cs" />
+    <Compile Include="Formatting\RazorViewFormatter.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="ILiaraConfiguration.cs" />
     <Compile Include="MessageHandlers\LiaraThrottleHandler.cs" />
@@ -106,7 +107,6 @@
     <Compile Include="Formatting\JsonFormatter.cs" />
     <Compile Include="Formatting\LiaraFormatSelector.cs" />
     <Compile Include="Formatting\LiaraFormatter.cs" />
-    <Compile Include="Formatting\RazorFormatter.cs" />
     <Compile Include="Formatting\RawFormatter.cs" />
     <Compile Include="Formatting\ILiaraFormatSelector.cs" />
     <Compile Include="Formatting\UrlEncodedFormFormatter.cs" />
