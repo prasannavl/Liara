@@ -193,7 +193,8 @@
     <EmbeddedResource Include="Formatting\Views\400.html" />
     <EmbeddedResource Include="Formatting\Views\Error.cshtml" />
     <EmbeddedResource Include="Formatting\Views\555.html" />
-    <Content Include="ResponseProcessing\HttpStatusCodes.txt" />
+    <None Include="Liara.nuspec" />
+    <None Include="ResponseProcessing\HttpStatusCodes.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Formatting\Views\404.html" />

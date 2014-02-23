@@ -8,6 +8,9 @@ packages/
 !/Docs/Generator
 /Docs/Generator/Output
 
+# Custom extensions
+*.nupkg
+
 # User-specific files
 *.suo
 *.user
