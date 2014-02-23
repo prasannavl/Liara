@@ -7,6 +7,7 @@ packages/
 /Docs/*
 !/Docs/Generator
 /Docs/Generator/Output
+Project.shfbproj_*
 
 # Custom extensions
 *.nupkg
