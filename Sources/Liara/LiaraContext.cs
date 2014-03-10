@@ -3,7 +3,7 @@
 // Copyright (c) Launchark Technologies. All rights reserved.
 // See License.txt in the project root for license information.
 // 
-// Created: 8:31 AM 15-02-2014
+// Created: 6:47 PM 23-02-2014
 
 using System;
 using System.Collections.Generic;
@@ -11,6 +11,7 @@ using Liara.Logging;
 using Liara.RequestProcessing;
 using Liara.ResponseProcessing;
 using Liara.Routing;
+using Liara.Security;
 using Liara.Services;
 
 namespace Liara
@@ -18,14 +19,15 @@ namespace Liara
     public class LiaraContext : ILiaraContext
     {
         private bool disposed;
+        private Dictionary<string, object> items;
         private ILiaraServicesContainer services;
 
         public LiaraContext(ILiaraServerEnvironment environment)
         {
             Environment = environment;
-            Items = new Dictionary<string, object>();
             Request = new LiaraRequest(this);
             Response = new LiaraResponse(this);
+            Security = new LiaraSecurity();
         }
 
         public LiaraContext(ILiaraEngine engine, ILiaraServerEnvironment environment) : this(environment)
@@ -37,7 +39,12 @@ namespace Liara
         public ILiaraServerEnvironment Environment { get; private set; }
         public ILiaraRequest Request { get; set; }
         public ILiaraResponse Response { get; set; }
-        public Dictionary<string, object> Items { get; set; }
+
+        public Dictionary<string, object> Items
+        {
+            get { return items ?? (items = new Dictionary<string, object>()); }
+            set { items = value; }
+        }
 
         public ILiaraServicesContainer Services
         {
@@ -62,6 +69,8 @@ namespace Liara
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
+        public ILiaraSecurity Security { get; set; }
 
         protected virtual void Dispose(bool disposing)
         {

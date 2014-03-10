@@ -77,7 +77,6 @@
     <Compile Include="Common\LiaraHeaderEntry.cs" />
     <Compile Include="Constants\LiaraServiceConstants.cs" />
     <Compile Include="Extensions\LiaraTypeExtensions.cs" />
-    <Compile Include="Extensions\Misc.cs" />
     <Compile Include="Formatting\LiaraFormatterCollection.cs" />
     <Compile Include="Formatting\ILiaraViewTemplate.cs" />
     <Compile Include="Formatting\LiaraViewProvider.cs" />
@@ -86,8 +85,16 @@
     <Compile Include="Formatting\LiaraViewFormatter.cs" />
     <Compile Include="Formatting\RazorViewFormatter.cs" />
     <Compile Include="Global.cs" />
+    <Compile Include="Helpers\ResponseHelpers.cs" />
+    <Compile Include="MessageHandlers\RouteInvocationHandler.cs" />
+    <Compile Include="Security\AllowAnonymous.cs" />
+    <Compile Include="Security\ILiaraAuthenticationHandler.cs" />
     <Compile Include="ILiaraConfiguration.cs" />
-    <Compile Include="MessageHandlers\LiaraThrottleHandler.cs" />
+    <Compile Include="Security\ILiaraSecurity.cs" />
+    <Compile Include="Security\LiaraAuthenticationHandler.cs" />
+    <Compile Include="Security\LiaraSecurity.cs" />
+    <Compile Include="Security\Authorize.cs" />
+    <Compile Include="MessageHandlers\ThrottleHandler.cs" />
     <Compile Include="MessageHandlers\TraceHandler.cs" />
     <Compile Include="ResponseProcessing\EmptyResponseSynchronizer.cs" />
     <Compile Include="ResponseProcessing\ILiaraResponseSynchronizer.cs" />
@@ -117,7 +124,7 @@
     <Compile Include="MessageHandlers\ErrorHandler.cs" />
     <Compile Include="MessageHandlers\RequestFormatHandler.cs" />
     <Compile Include="MessageHandlers\ResponseFormatHandler.cs" />
-    <Compile Include="MessageHandlers\RouteInvocationHandler.cs" />
+    <Compile Include="MessageHandlers\ActionInvocationHandler.cs" />
     <Compile Include="MessageHandlers\TaskCompletionHandler.cs" />
     <Compile Include="RequestProcessing\LiaraQueryString.cs" />
     <Compile Include="Constants\CommonConstants.cs" />

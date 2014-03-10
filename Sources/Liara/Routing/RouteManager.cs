@@ -3,7 +3,7 @@
 // Copyright (c) Launchark Technologies. All rights reserved.
 // See License.txt in the project root for license information.
 // 
-// Created: 12:49 PM 16-02-2014
+// Created: 6:47 PM 23-02-2014
 
 using System;
 using System.Collections.Generic;
@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using Liara.Common;
 using Liara.Helpers;
 using Liara.MessageHandlers;
+using Liara.Security;
 
 namespace Liara.Routing
 {
@@ -137,9 +138,11 @@ namespace Liara.Routing
                                       route.MethodInfo.ReturnType.GetGenericArguments().ToList().Select(x => x.FullName))
                                 : " - Out : " + route.MethodInfo.ReturnType);
                     }
-                    
+
                     Route[] existingRoutes;
-                    var routeList = routeDictionary.TryGetValue(item, out existingRoutes) ? existingRoutes.ToList() : new List<Route>();
+                    var routeList = routeDictionary.TryGetValue(item, out existingRoutes)
+                        ? existingRoutes.ToList()
+                        : new List<Route>();
 
                     routeList.Add(route);
 
@@ -283,26 +286,40 @@ namespace Liara.Routing
         {
             var routeHandlers = new LiaraMessageHandlerCollection();
 
-            var declaringType = method.DeclaringType;
+            dynamic declaringType = method;
             if (declaringType != null)
             {
                 var modulesInScope = explorer.GetLiaraModules();
-
+                var allowAnonymous = false;
                 do
                 {
-                    var handlers = declaringType.GetCustomAttributes(typeof (LiaraMessageHandler), false);
+                    object[] handlers = declaringType.GetCustomAttributes(typeof (LiaraMessageHandler), false);
                     if (handlers.Length <= 0) continue;
 
                     foreach (
                         LiaraMessageHandler handler in handlers.OrderByDescending(h => ((LiaraMessageHandler) h).Order))
                     {
+                        var type = handler.GetType();
+                        if (allowAnonymous)
+                        {
+                            if (type == typeof (Authorize))
+                            {
+                                continue;
+                            }
+                        }
+                        if (type == typeof (AllowAnonymous))
+                        {
+                            allowAnonymous = true;
+                            continue;
+                        }
                         routeHandlers.Insert(0, handler);
                     }
                 } while ((declaringType = declaringType.DeclaringType) != null &&
                          modulesInScope.Any(m => m.GetType() == declaringType));
+
             }
 
-
+            routeHandlers.Add((LiaraMessageHandler)explorer.GetConfiguration().ActionInvoker);
             return routeHandlers;
         }
     }

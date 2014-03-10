@@ -3,7 +3,7 @@
 // Copyright (c) Launchark Technologies. All rights reserved.
 // See License.txt in the project root for license information.
 // 
-// Created: 12:49 PM 16-02-2014
+// Created: 6:47 PM 23-02-2014
 
 using System;
 using System.Collections;
@@ -17,15 +17,20 @@ using Liara.Logging;
 using Liara.MessageHandlers;
 using Liara.ResponseProcessing;
 using Liara.Routing;
+using Liara.Security;
 using Liara.Services;
 
 namespace Liara
 {
     public class LiaraConfiguration : ILiaraConfiguration
     {
+        private ILiaraActionInvoker actionInvoker;
+        private ILiaraAuthenticationHandler authenticationHandler;
         private ILiaraFormatSelector formatSelector;
         private LiaraFormatterCollection formatters;
         private LiaraMessageHandlerCollection handlers;
+        private bool isActionInvokerWired;
+        private bool isAuthenticationHandlerWired;
         private bool isBuildComplete;
         private bool isDefaultHandlerListWired;
         private bool isFormatSelctorWired;
@@ -86,6 +91,16 @@ namespace Liara
             {
                 formatSelector = value;
                 isFormatSelctorWired = true;
+            }
+        }
+
+        public ILiaraAuthenticationHandler AuthenticationHandler
+        {
+            get { return authenticationHandler; }
+            set
+            {
+                authenticationHandler = value;
+                isAuthenticationHandlerWired = true;
             }
         }
 
@@ -160,6 +175,15 @@ namespace Liara
             set { rootDirectory = value; }
         }
 
+        public ILiaraActionInvoker ActionInvoker
+        {
+            get { return actionInvoker; }
+            set
+            {
+                actionInvoker = value;
+                isActionInvokerWired = true;
+            }
+        }
 
         public void Build()
         {
@@ -177,6 +201,8 @@ namespace Liara
                         WireTraceWriter();
                     if (!isFrameworkLoggerWired)
                         WireFrameworkLogger();
+                    if (!isActionInvokerWired)
+                        WireActionInvoker();
                     if (!isRouteMapped)
                         WireRoutes();
                     if (!isDefaultHandlerListWired)
@@ -187,6 +213,8 @@ namespace Liara
                         WireFormatSelector();
                     if (!isStatusHandlerWired)
                         WireStatusHandler();
+                    if (!isAuthenticationHandlerWired)
+                        WireAuthenticationHandler();
                     if (!isResponseSynchronizerWired)
                         WireResponseSynchronizer();
 
@@ -237,7 +265,7 @@ namespace Liara
             if (UseBufferedResponse || UseBufferedRequest)
                 Handlers.Insert(0, new BufferedStreamHandler());
 
-            Handlers.Insert(0, new LiaraThrottleHandler());
+            Handlers.Insert(0, new ThrottleHandler());
 
             // Add the final handlers after the user handlers.
             Handlers.Add(new RouteInvocationHandler());
@@ -376,6 +404,25 @@ namespace Liara
                 traceWriter = logWriter;
             }
             isTraceWriterWired = true;
+        }
+
+        public virtual void WireActionInvoker()
+        {
+            var selection =
+                Services.GetAll<ILiaraActionInvoker>().FirstOrDefault() ??
+                new ActionInvocationHandler();
+            actionInvoker = selection;
+            isActionInvokerWired = true;
+        }
+
+        public virtual void WireAuthenticationHandler()
+        {
+            var selection =
+                Services.GetAll<ILiaraAuthenticationHandler>().OrderByDescending(x => x.Priority).FirstOrDefault() ??
+                new LiaraAuthenticationHandler();
+
+            authenticationHandler = selection;
+            isAuthenticationHandlerWired = true;
         }
     }
 }

@@ -30,7 +30,7 @@ namespace Liara.Formatting
                 context.Request.Format.MediaType.ToString().ToLower(),
                 out formatterArray))
             {
-                foreach (ILiaraFormatter liaraFormatter in formatterArray)
+                foreach (var liaraFormatter in formatterArray)
                 {
                     if (liaraFormatter.CanRead(readAsType, context))
                         return liaraFormatter;
@@ -52,7 +52,7 @@ namespace Liara.Formatting
                     context.Route.PathExtension.ToLower(),
                     out formatterArray))
                 {
-                    foreach (ILiaraFormatter liaraFormatter in formatterArray)
+                    foreach (var liaraFormatter in formatterArray)
                     {
                         if (liaraFormatter.CanWrite(inputObjectType, context))
                         {
@@ -68,7 +68,7 @@ namespace Liara.Formatting
                 if (context.Engine.Configuration.Formatters.MediaMap.TryGetValue(
                     MediaType.FromDerivedMediaType(acceptedMediaType).ToString().ToLower(), out formatterArray))
                 {
-                    foreach (ILiaraFormatter liaraFormatter in formatterArray)
+                    foreach (var liaraFormatter in formatterArray)
                     {
                         if (liaraFormatter.CanWrite(inputObjectType, context))
                         {

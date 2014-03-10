@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Liara.MessageHandlers
 {
-    public class LiaraThrottleHandler : LiaraMessageHandler
+    public class ThrottleHandler : LiaraMessageHandler
     {
         private readonly object syncRoot = new object();
         public int MaxConcurrentRequests = 1000;

@@ -23,6 +23,11 @@ namespace Liara.Common
             this.configuration = configuration;
         }
 
+        public ILiaraConfiguration GetConfiguration()
+        {
+            return configuration;
+        }
+
         public IEnumerable<LiaraModule> GetLiaraModules()
         {
             return configuration.Services.GetAll<LiaraModule>();

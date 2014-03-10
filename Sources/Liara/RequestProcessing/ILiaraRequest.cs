@@ -3,7 +3,9 @@
 // Copyright (c) Launchark Technologies. All rights reserved.
 // See License.txt in the project root for license information.
 // 
-// Created: 8:31 AM 15-02-2014
+// Created: 6:47 PM 23-02-2014
+
+using System.Security.Claims;
 
 namespace Liara.RequestProcessing
 {

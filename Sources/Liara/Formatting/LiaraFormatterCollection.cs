@@ -3,12 +3,11 @@
 // Copyright (c) Launchark Technologies. All rights reserved.
 // See License.txt in the project root for license information.
 // 
-// Created: 1:39 AM 18-02-2014
+// Created: 6:47 PM 23-02-2014
 
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Policy;
 using Liara.Common;
 
 namespace Liara.Formatting

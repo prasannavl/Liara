@@ -17,7 +17,7 @@ namespace Liara.MessageHandlers
 
         private volatile bool operationStarted;
 
-        public LiaraMessageHandlerBase InnerHandler
+        internal LiaraMessageHandlerBase InnerHandler
         {
             get { return innerHandler; }
             set

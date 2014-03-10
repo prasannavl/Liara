@@ -11,6 +11,7 @@ using Liara.Logging;
 using Liara.RequestProcessing;
 using Liara.ResponseProcessing;
 using Liara.Routing;
+using Liara.Security;
 using Liara.Services;
 
 namespace Liara
@@ -24,6 +25,7 @@ namespace Liara
         Dictionary<string, object> Items { get; set; }
         ILiaraServicesContainer Services { get; set; }
         Route Route { get; set; }
+        ILiaraSecurity Security { get; set; }
         ILiaraLogWriter Log { get; }
         ILiaraLogWriter Trace { get; }
     }

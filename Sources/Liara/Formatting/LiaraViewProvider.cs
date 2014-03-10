@@ -90,12 +90,12 @@ namespace Liara.Formatting
                 }
             }
 
-            context.Trace.WriteExceptionToAsync("Unresolved Views",
-                new Exception(String.Format("View not found for {0} in method: {1}",
+            context.Trace.WriteToAsync("Unresolved Views",
+                String.Format("View not found for {0} in method: {1}",
                     context.Request.Info.Path,
                     route != null
                         ? route.MethodInfo.DeclaringType.FullName + "->" + route.MethodInfo.Name
-                        : "{Unresolved}")), false);
+                        : "{Unresolved}"));
 
             return null;
         }

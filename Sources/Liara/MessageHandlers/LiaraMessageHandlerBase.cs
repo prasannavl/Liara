@@ -12,6 +12,7 @@ using Liara.Formatting;
 
 namespace Liara.MessageHandlers
 {
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true)]
     public abstract class LiaraMessageHandlerBase : Attribute, IDisposable
     {
         public int Order { get; set; }

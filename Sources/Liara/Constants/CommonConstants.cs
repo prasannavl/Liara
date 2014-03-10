@@ -14,4 +14,9 @@ namespace Liara.Constants
         public static string Https = "https";
         public static string XmlHttpRequest = "XMLHttpRequest";
     }
+
+    public static class InternalConstants
+    {
+        public static string RouteHandlerCompletionSignalKey = "_liara_rhSignal";
+    }
 }

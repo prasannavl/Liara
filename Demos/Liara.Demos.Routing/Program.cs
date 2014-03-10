@@ -1,20 +1,19 @@
 ﻿// Author: Prasanna V. Loganathar
-// Project: Liara.Demos.Routing
+// Project: Liara.Demos.General
 // Copyright (c) Launchark Technologies. All rights reserved.
 // See License.txt in the project root for license information.
 // 
-// Created: 12:49 PM 16-02-2014
+// Created: 6:47 PM 23-02-2014
 
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
-using Liara.Formatting;
 using Liara.MessageHandlers;
+using Liara.Security;
 using Microsoft.Owin.Hosting;
 using Owin;
 
-namespace Liara.Demos.Routing
+namespace Liara.Demos.General
 {
     public class Program
     {
@@ -27,7 +26,8 @@ namespace Liara.Demos.Routing
             Console.WriteLine("Listening at {0}", namedUrl);
             Console.WriteLine();
 
-            Global.FrameworkLogger.IsEnabled = true;
+            Global.FrameworkLogger.IsEnabled = false;
+
 
             using (WebApp.Start<Startup>(url))
             {
@@ -102,9 +102,17 @@ namespace Liara.Demos.Routing
     public class MyModule : TestModule
     {
         [Route("/hello3")]
+        [Authorize]
         public string SayHelloUsingAutoFormat()
         {
             return "Hello3 from 3.";
+        }
+
+        [Route("/hello4")]
+        [Authorize("DocumentClaim", "Read")]
+        public string SayHelloUsingAutoFormat4()
+        {
+            return "Hello4 from 4.";
         }
     }
 
@@ -128,7 +136,7 @@ namespace Liara.Demos.Routing
 
             try
             {
-                return new {Name = c.Name, Message = c.Message};
+                return new {c.Name, c.Message};
             }
             catch (Exception ex)
             {
@@ -141,21 +149,15 @@ namespace Liara.Demos.Routing
         {
             try
             {
-                return new { Name = Request.Parameters["Name"], Message = Request.Parameters["Message"] };
+                return new {Name = Request.Parameters["Name"], Message = Request.Parameters["Message"]};
             }
             catch (Exception ex)
             {
-                return new { Error = "No name, or message given in the input!", Detail = ex.Message };
+                return new {Error = "No name, or message given in the input!", Detail = ex.Message};
             }
         }
 
-        class PostDto
-        {
-            public string Name { get; set; }
-            public  string Message { get; set; }
-        }
-
-        [RequestModel(typeof(PostDto))]
+        [RequestModel(typeof (PostDto))]
         [Route("/postdto"), RouteMethod("POST")]
         public object PostDtoAction()
         {
@@ -163,27 +165,33 @@ namespace Liara.Demos.Routing
 
             try
             {
-                return new { Name = c.Name, Message = c.Message };
+                return new {c.Name, c.Message};
             }
             catch (Exception ex)
             {
-                return new { Error = "No name, or message given in the input!", Detail = ex.Message };
+                return new {Error = "No name, or message given in the input!", Detail = ex.Message};
             }
         }
 
 
-        [RequestModel(typeof(PostDto))]
+        [RequestModel(typeof (PostDto))]
         [Route("/postdto2"), RouteMethod("POST")]
         public object PostDto2Action()
         {
             try
             {
-                return new { Name = Request.Parameters["Name"], Message = Request.Parameters["Message"] };
+                return new {Name = Request.Parameters["Name"], Message = Request.Parameters["Message"]};
             }
             catch (Exception ex)
             {
-                return new { Error = "No name, or message given in the input!", Detail = ex.Message };
+                return new {Error = "No name, or message given in the input!", Detail = ex.Message};
             }
+        }
+
+        private class PostDto
+        {
+            public string Name { get; set; }
+            public string Message { get; set; }
         }
     }
 }

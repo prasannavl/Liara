@@ -5,6 +5,7 @@ using Liara.Logging;
 using Liara.MessageHandlers;
 using Liara.ResponseProcessing;
 using Liara.Routing;
+using Liara.Security;
 using Liara.Services;
 
 namespace Liara
@@ -16,11 +17,13 @@ namespace Liara
         bool UseBufferedResponse { get; set; }
         LiaraFormatterCollection Formatters { get; set; }
         ILiaraFormatSelector FormatSelector { get; set; }
+        ILiaraAuthenticationHandler AuthenticationHandler { get; set; }
         ILiaraStatusHandler StatusHandler { get; set; }
         IDictionary<string, IDictionary<string, Route[]>> Routes { get; set; }
         LiaraMessageHandlerCollection Handlers { get; set; }
         ILiaraLogWriter LogWriter { get; set; }
         ILiaraResponseSynchronizer ResponseSynchronizer { get; set; }
+        ILiaraActionInvoker ActionInvoker { get; set; }
         ILiaraLogWriter TraceWriter { get; set; }
         ILiaraHashTable<object> Items { get; set; }
         string RootDirectory { get; set; }

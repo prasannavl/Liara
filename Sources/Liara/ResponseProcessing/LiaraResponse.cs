@@ -5,6 +5,7 @@
 // 
 // Created: 8:31 AM 15-02-2014
 
+using System.Security.Claims;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -57,7 +58,6 @@ namespace Liara.ResponseProcessing
             context.Engine.Configuration.ResponseSynchronizer.Synchronize(context);
             isSynced = true;
         }
-
 
         /// <summary>
         ///     Writes the given text to the response body stream using UTF-8.

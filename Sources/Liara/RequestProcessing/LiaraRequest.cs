@@ -5,6 +5,8 @@
 // 
 // Created: 12:49 PM 16-02-2014
 
+using System.Security.Claims;
+
 namespace Liara.RequestProcessing
 {
     public class LiaraRequest : ILiaraRequest
