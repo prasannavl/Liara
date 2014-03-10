@@ -4,13 +4,13 @@ namespace Liara.Security
 {
     public class LiaraSecurity : ILiaraSecurity
     {
-        private ILiaraHashTable<object> claims;
+        private ILiaraHashTable<string> claims;
         public object Id { get; set; }
         public bool IsAuthenticated { get; set; }
 
-        public ILiaraHashTable<object> Claims
+        public ILiaraHashTable<string> Claims
         {
-            get { return claims ?? (claims = new LiaraHashTable<object>()); }
+            get { return claims ?? (claims = new LiaraHashTable<string>()); }
             set { claims = value; }
         }
     }

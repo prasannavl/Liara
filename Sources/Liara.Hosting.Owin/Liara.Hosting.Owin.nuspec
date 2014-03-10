@@ -8,7 +8,7 @@
     <owners>$author$</owners>
       <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
       <projectUrl>http://prasannavl.github.io/Liara/</projectUrl>
-      <iconUrl>https://raw.github.com/prasannavl/liara/master/Logos/Header.png</iconUrl>
+      <iconUrl>https://raw.github.com/prasannavl/liara/master/Logos/Logo-Icon.png</iconUrl>
       <requireLicenseAcceptance>false</requireLicenseAcceptance>
       <description>$description$</description>
       <releaseNotes>First release</releaseNotes>

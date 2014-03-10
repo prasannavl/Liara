@@ -6,6 +6,6 @@ namespace Liara.Security
     {
         object Id { get; set; }
         bool IsAuthenticated { get; set; }
-        ILiaraHashTable<object> Claims { get; set; }
+        ILiaraHashTable<string> Claims { get; set; }
     }
 }
