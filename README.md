@@ -1,5 +1,5 @@
-The Liara Framework
-===================
+The Liara Framework [Experimental]
+==================================
 
 Where elegance meets performance.
 
@@ -14,4 +14,6 @@ If you don't like something swap it out with your own, or even trim everything d
 
 From header and cookie parsing to Routing and IoC Logic, everything has been carefully designed with maximum performance, and developer simplicity in mind.
 
-More demos, units tests, and documentation coming soon.
+Documentation, and unit tests, and more demos, after finalization of the methods, and a simplified codebase. Current code is experimental for the proof-of-concept only.
+
+PVL
