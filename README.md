@@ -16,4 +16,6 @@ From header and cookie parsing to Routing and IoC Logic, everything has been car
 
 Documentation, and unit tests, and more demos, after finalization of the methods, and a simplified codebase. Current code is experimental for the proof-of-concept only.
 
+Note: Even though, its already has better performance compared to the other frameworks, this current code is not optimized to its best. There are plenty of optimizations, for instance, objects pools to reduce GC pressure, that it could benefit from. 
+
 PVL
