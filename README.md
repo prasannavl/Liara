@@ -1,4 +1,4 @@
-The Liara Framework [Obsolete]
+The Liara Framework
 ==================================
 
 This project is obsolete. Please check **ASP.NET vNext** at https://github.com/aspnet/home
