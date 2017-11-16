@@ -1,8 +1,11 @@
 The Liara Framework
 ==================================
 
-**Project Status Note:** 
-This project was just a high-performance experiment, and is now obsolete. Please check **ASP.NET vNext** at https://github.com/aspnet/home
+### Status Note
+
+> Experiment ended: April, 2014.
+
+> This project was a high-performance experiment, and is now obsolete. Please check **ASP.NET vNext** at https://github.com/aspnet/home
 
 Where elegance meets performance.
 
