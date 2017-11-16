@@ -1,13 +1,13 @@
 The Liara Framework
 ==================================
+Where elegance meets performance.
+
 
 ### Status Note
 
 > Experiment ended: April, 2014.
 
 > This project was a high-performance experiment, and is now obsolete. Please check **ASP.NET vNext** at https://github.com/aspnet/home
-
-Where elegance meets performance.
 
 <img src="https://raw.github.com/prasannavl/liara/master/Logos/Header.png" alt="Liara Logo"/>
 
